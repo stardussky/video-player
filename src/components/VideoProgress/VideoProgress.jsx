@@ -88,23 +88,16 @@ class VideoProgress extends Component {
         }
     }
 
-    transformTime (time) {
-        time = time | 0
-        const second = time % 60
-        time -= second
-        const minute = time / 60 % 60
-        const hour = (time / 60 / 60) | 0
-
-        return { second, minute, hour }
-    }
-
     get currentProgress () {
         return this.props.current / this.props.duration
     }
 
+    get hoverTime () {
+        return this.state.hoverProgress * this.props.duration
+    }
+
     get transformHoverTime () {
-        const time = this.state.hoverProgress * this.props.duration
-        return this.transformTime(time)
+        return new Date(this.hoverTime * 1000).toISOString().substr(11, 8)
     }
 
     render () {
@@ -132,10 +125,10 @@ class VideoProgress extends Component {
                     <div className={`video-progress__thumbnail ${this.state.isHover || this.state.canDrag ? '-active' : ''}`}>
                         <VideoThumbnail
                             videoEl='.video-media__main'
-                            current={Math.ceil(this.state.hoverProgress * this.props.duration)}
+                            current={Math.ceil(this.hoverTime)}
                         />
                         <div className='video-progress__time'>
-                            {this.transformHoverTime.hour}:{this.transformHoverTime.minute}:{this.transformHoverTime.second}
+                            {this.transformHoverTime}
                         </div>
                     </div>
                 </div>

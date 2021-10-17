@@ -84,24 +84,6 @@ class VideoMedia extends Component {
         this.videoEl.current.currentTime = duration * progress
     }
 
-    transformTime (time) {
-        time = time | 0
-        const second = time % 60
-        time -= second
-        const minute = time / 60 % 60
-        const hour = (time / 60 / 60) | 0
-
-        return { second, minute, hour }
-    }
-
-    get transformCurrentTime () {
-        return this.transformTime(this.state.videoCurrentTime)
-    }
-
-    get transformDurationTime () {
-        return this.transformTime(this.state.videoDuration)
-    }
-
     render () {
         return (
             <div className='video-media'>
