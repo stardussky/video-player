@@ -1,7 +1,17 @@
 .video-progress {
     position: relative;
-    padding: $padding 0;
+    padding: $padding * 2 0;
     cursor: pointer;
+
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            .video-progress {
+                &__hover {
+                    opacity: 1;
+                }
+            }
+        }
+    }
 
     &__bar {
         @include size(100%, 5px);
@@ -25,9 +35,13 @@
     }
 
     &__hover {
-        @include size(75%, 100%);
+        @include size(100%);
 
-        // background-color: rgba(map-get($colors, white), 0.25);
+        background-color: rgba(map-get($colors, white), 0.25);
+        opacity: 0;
+        transition: opacity .3s;
+        transform-origin: left;
+        transform: scaleX(var(--hover-progress, 0));
     }
 
     &__current {
@@ -41,8 +55,6 @@
     &__dot {
         @include size(100%);
 
-        transform: translate(calc(var(--progress, 0) * 100%), 0);
-
         span {
             @include size(20px);
 
@@ -51,7 +63,37 @@
             left: 0;
             background-color: map-get($colors, third);
             border-radius: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%) translate(calc(var(--width, 0) * var(--progress, 0) * 1px), 0);
         }
+    }
+
+    &__thumbnail {
+        @include size(100%);
+
+        opacity: 0;
+        transition: opacity .3s;
+
+        > * {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
+        .video-thumbnail {
+            transform: translate(-50%, -$padding * 7) translate(calc(var(--width, 0) * var(--hover-progress, 0) * 1px), 0);
+        }
+
+        &.-active {
+            opacity: 1;
+        }
+    }
+
+    &__time {
+        padding: $padding;
+        font-size: 14px;
+        color: map-get($colors, white);
+        background-color: rgba(map-get($colors, black), 0.5);
+        transform: translate(-50%, -$padding * 2) translate(calc(var(--width, 0) * var(--hover-progress, 0) * 1px), 0);
+        border-radius: 5px;
     }
 }

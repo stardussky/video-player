@@ -1,38 +1,61 @@
 import React, { Component, createRef } from 'react'
 import PropTypes from 'prop-types'
 import './video-progress.scss'
+import VideoThumbnail from '@/components/VideoThumbnail/VideoThumbnail'
 
 class VideoProgress extends Component {
     constructor (props) {
         super()
         this.progressEl = createRef()
         this.props = props
-        this.state = {}
+        this.state = {
+            width: 0,
+            hoverProgress: 0,
+            isHover: false,
+            canDrag: false,
+        }
 
+        this.handleHover = this.handleHover.bind(this)
+        this.handleBlur = this.handleBlur.bind(this)
         this.handleStartDrag = this.handleStartDrag.bind(this)
         this.handleMove = this.handleMove.bind(this)
         this.handleReset = this.handleReset.bind(this)
-
-        this.canDrag = false
-        this.hoverProgress = 0
     }
 
     componentDidMount () {
+        if (this.progressEl.current) {
+            this.setState({
+                width: this.progressEl.current.clientWidth,
+            })
+        }
+    }
+
+    handleHover () {
+        this.setState({
+            isHover: true,
+        })
         window.addEventListener('mousemove', this.handleMove)
         window.addEventListener('mouseup', this.handleReset)
     }
 
-    componentWillUnmount () {
-        window.removeEventListener('mousemove', this.handleMove)
-        window.removeEventListener('mouseup', this.handleReset)
+    handleBlur () {
+        this.setState({
+            isHover: false,
+        })
+        if (!this.state.canDrag) {
+            window.removeEventListener('mousemove', this.handleMove)
+            window.removeEventListener('mouseup', this.handleReset)
+        }
     }
 
     handleStartDrag () {
-        this.canDrag = true
+        this.setState({
+            canDrag: true,
+        })
 
         this.beforeStatus = this.props.status
         this.props.onPause()
-        this.props.onSetProgress(this.hoverProgress)
+        this.props.onSetProgress(this.state.hoverProgress)
     }
 
     handleMove (e) {
@@ -43,22 +66,45 @@ class VideoProgress extends Component {
         const x = clientX - left
         const clampX = Math.max(Math.min(x, clientWidth), 0)
         const progress = clampX / clientWidth
-        this.hoverProgress = progress
+        this.setState({
+            hoverProgress: progress,
+        })
 
-        if (this.canDrag) {
-            this.props.onSetProgress(this.hoverProgress)
+        if (this.state.canDrag) {
+            this.props.onSetProgress(this.state.hoverProgress)
         }
     }
 
     handleReset () {
-        this.canDrag = false
+        this.setState({
+            canDrag: false,
+        })
         if (this.beforeStatus) {
             this.props.onPlay()
         }
+        if (!this.state.isHover) {
+            window.removeEventListener('mousemove', this.handleMove)
+            window.removeEventListener('mouseup', this.handleReset)
+        }
+    }
+
+    transformTime (time) {
+        time = time | 0
+        const second = time % 60
+        time -= second
+        const minute = time / 60 % 60
+        const hour = (time / 60 / 60) | 0
+
+        return { second, minute, hour }
     }
 
     get currentProgress () {
         return this.props.current / this.props.duration
+    }
+
+    get transformHoverTime () {
+        const time = this.state.hoverProgress * this.props.duration
+        return this.transformTime(time)
     }
 
     render () {
@@ -67,10 +113,14 @@ class VideoProgress extends Component {
                 ref={this.progressEl}
                 className='video-progress'
                 style={{
+                    '--width': this.state.width,
                     '--progress': this.currentProgress,
+                    '--hover-progress': this.state.hoverProgress,
                     '--buffered-progress': this.props.buffered,
                 }}
+                onMouseEnter={this.handleHover}
                 onMouseDown={this.handleStartDrag}
+                onMouseLeave={this.handleBlur}
             >
                 <div className='video-progress__bar'>
                     <div className='video-progress__buffered' />
@@ -78,6 +128,15 @@ class VideoProgress extends Component {
                     <div className='video-progress__current' />
                     <div className='video-progress__dot'>
                         <span />
+                    </div>
+                    <div className={`video-progress__thumbnail ${this.state.isHover || this.state.canDrag ? '-active' : ''}`}>
+                        <VideoThumbnail
+                            videoEl='.video-media__main'
+                            current={Math.ceil(this.state.hoverProgress * this.props.duration)}
+                        />
+                        <div className='video-progress__time'>
+                            {this.transformHoverTime.hour}:{this.transformHoverTime.minute}:{this.transformHoverTime.second}
+                        </div>
                     </div>
                 </div>
             </div>

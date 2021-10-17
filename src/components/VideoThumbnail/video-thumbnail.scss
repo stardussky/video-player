@@ -1,0 +1,13 @@
+.video-thumbnail {
+    @include aspect(9 / 16);
+
+    width: 300px;
+
+    > * {
+        @include size(100%);
+
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+}

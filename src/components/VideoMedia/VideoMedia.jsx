@@ -2,6 +2,7 @@ import React, { Component, createRef } from 'react'
 import './video-media.scss'
 import SvgIcon from '@/components/SvgIcon/SvgIcon'
 import VideoProgress from '@/components/VideoProgress/VideoProgress'
+
 class VideoMedia extends Component {
     constructor () {
         super()
@@ -61,21 +62,20 @@ class VideoMedia extends Component {
     }
 
     handleOnProgress () {
+        // TODO buffered顯示問題
         const { buffered, currentTime, duration } = this.videoEl.current
 
-        // if (buffered.length) {
-        //     let range = 0
-        //     while (!(buffered.start(range) <= currentTime && currentTime <= buffered.end(range))) {
-        //         range += 1
-        //     }
-        //     const startProgress = buffered.start(range) / duration
-        //     const endProgress = buffered.end(range) / duration
-        //     const bufferProgress = endProgress - startProgress
+        let bufferProgress = 0
+        for (let i = 0; i < buffered.length; i++) {
+            if (buffered.start(buffered.length - 1 - i) < currentTime) {
+                bufferProgress = (buffered.end(buffered.length - 1 - i) / duration)
+                break
+            }
+        }
 
-        //     this.setState({
-        //         videoBuffered: bufferProgress,
-        //     })
-        // }
+        this.setState({
+            videoBuffered: bufferProgress,
+        })
     }
 
     handleSetProgress (progress) {
@@ -84,10 +84,29 @@ class VideoMedia extends Component {
         this.videoEl.current.currentTime = duration * progress
     }
 
+    transformTime (time) {
+        time = time | 0
+        const second = time % 60
+        time -= second
+        const minute = time / 60 % 60
+        const hour = (time / 60 / 60) | 0
+
+        return { second, minute, hour }
+    }
+
+    get transformCurrentTime () {
+        return this.transformTime(this.state.videoCurrentTime)
+    }
+
+    get transformDurationTime () {
+        return this.transformTime(this.state.videoDuration)
+    }
+
     render () {
         return (
             <div className='video-media'>
                 <video
+                    crossOrigin='anonymous'
                     className='video-media__main'
                     ref={this.videoEl}
                     onLoadedMetadata={this.handleOnload}

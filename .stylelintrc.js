@@ -1,6 +1,10 @@
 module.exports = {
     extends: ['stylelint-config-standard'],
     plugins: ['stylelint-order'],
+    "ignoreFiles": [
+        "**/*.js",
+        "**/*.jsx"
+    ],
     // add your custom config here
     // https://stylelint.io/user-guide/configuration
     rules: {
@@ -23,7 +27,6 @@ module.exports = {
         'no-descending-specificity': null,
         'at-rule-empty-line-before': null,
         'order/properties-alphabetical-order': null,
-        'value-keyword-case': null,
         'order/properties-order': [
             'content',
             'position',

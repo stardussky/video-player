@@ -4,7 +4,6 @@
     position: relative;
     display: flex;
     align-items: center;
-    overflow: hidden;
     font-size: 25px;
 
     &__main {
@@ -20,7 +19,7 @@
         position: absolute;
         top: 0;
         left: 0;
-        // opacity: 0;
+        opacity: 0;
         transition: opacity .3s;
 
         @media (hover: hover) and (pointer: fine) {
@@ -34,7 +33,7 @@
 
             display: flex;
             justify-content: flex-end;
-            padding: 0 $padding * 2;
+            padding: $padding $padding * 2;
             flex-direction: column;
         }
 
