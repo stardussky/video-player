@@ -1,4 +1,5 @@
 import React, { Component, createRef } from 'react'
+import classNames from 'classnames'
 import './video-media.scss'
 import SvgIcon from '@/components/SvgIcon/SvgIcon'
 import VideoProgress from '@/components/VideoProgress/VideoProgress'
@@ -102,7 +103,10 @@ class VideoMedia extends Component {
                     <source src={new URL('../../assets/video/video1.mp4', import.meta.url).href} type='video/mp4' />
                     {/* <source src='http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' /> */}
                 </video>
-                <div className={`video-media__controls ${!this.state.videoStatus ? '-active' : ''}`}>
+                <div className={classNames('video-media__controls', {
+                    '-active': !this.state.videoStatus,
+                })}
+                >
                     <span
                         className='video-media__controls-mask'
                         onClick={this.handleToggle}

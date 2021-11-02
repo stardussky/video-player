@@ -1,5 +1,6 @@
 import React, { Component, createRef } from 'react'
 import PropTypes from 'prop-types'
+import classNames from 'classnames'
 import './video-progress.scss'
 import VideoThumbnail from '@/components/VideoThumbnail/VideoThumbnail'
 
@@ -122,7 +123,10 @@ class VideoProgress extends Component {
                     <div className='video-progress__dot'>
                         <span />
                     </div>
-                    <div className={`video-progress__thumbnail ${this.state.isHover || this.state.canDrag ? '-active' : ''}`}>
+                    <div className={classNames('video-progress__thumbnail', {
+                        '-active': this.state.isHover || this.state.canDrag,
+                    })}
+                    >
                         <VideoThumbnail
                             videoEl='.video-media__main'
                             current={Math.ceil(this.hoverTime)}
