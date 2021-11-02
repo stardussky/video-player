@@ -5,11 +5,12 @@ import './video-thumbnail.scss'
 function VideoThumbnail (props) {
     const [thumbnails, setThumbnails] = useState([])
     const thumbnailEl = useRef(null)
-
+    // TODO 改成hover載入
     const preLoadThumbnails = () => {
         let videoEl = document.querySelector(props.videoEl)
         if (videoEl && videoEl instanceof HTMLVideoElement) {
             videoEl = videoEl.cloneNode(true)
+            videoEl.crossOrigin = 'anonymous'
 
             videoEl.addEventListener('loadedmetadata', async () => {
                 const { clientWidth, clientHeight } = thumbnailEl.current
@@ -25,7 +26,7 @@ function VideoThumbnail (props) {
                     await new Promise(resolve => {
                         videoEl.addEventListener('canplay', () => {
                             ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height)
-                            const image = canvas.toDataURL('image/jpeg')
+                            const image = canvas.toDataURL('image/webp')
                             setThumbnails((thumbnails) => [...thumbnails, image])
                             resolve(image)
                         }, { once: true })

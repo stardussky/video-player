@@ -84,11 +84,14 @@ class VideoMedia extends Component {
         this.videoEl.current.currentTime = duration * progress
     }
 
+    get transformTime () {
+        return new Date(this.state.videoCurrentTime * 1000).toISOString().substr(11, 8)
+    }
+
     render () {
         return (
             <div className='video-media'>
                 <video
-                    crossOrigin='anonymous'
                     className='video-media__main'
                     ref={this.videoEl}
                     onLoadedMetadata={this.handleOnload}
@@ -96,10 +99,10 @@ class VideoMedia extends Component {
                     onSeeking={this.handleOnTracked}
                     onProgress={this.handleOnProgress}
                 >
-                    <source src='assets/video/video1.mp4' type='video/mp4' />
-                    {/* <source src='http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' /> */}
+                    {/* <source src='assets/video/video1.mp4' type='video/mp4' /> */}
+                    <source src='http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' />
                 </video>
-                <div className='video-media__controls'>
+                <div className={`video-media__controls ${!this.state.videoStatus ? '-active' : ''}`}>
                     <span
                         className='video-media__controls-mask'
                         onClick={this.handleToggle}
@@ -120,6 +123,9 @@ class VideoMedia extends Component {
                                 onClick={this.handleToggle}
                             >
                                 <SvgIcon name={this.state.videoStatus ? 'pause' : 'play'} />
+                            </div>
+                            <div className='video-media__time'>
+                                {this.transformTime}
                             </div>
                         </div>
                     </div>
