@@ -54,9 +54,18 @@
             position: relative;
             display: flex;
             align-items: center;
+
+            > * {
+                & ~ * {
+                    margin-left: $padding * 3;
+                }
+            }
         }
 
         &-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: $padding;
             cursor: pointer;
         }

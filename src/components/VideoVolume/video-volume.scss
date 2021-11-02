@@ -1,0 +1,43 @@
+.video-volume {
+    display: flex;
+    cursor: pointer;
+
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            .video-volume {
+                &__range {
+                    opacity: 1;
+                    pointer-events: auto;
+                }
+            }
+        }
+    }
+
+    &__range {
+        position: relative;
+        margin-left: $padding;
+        background-color: transparent;
+        -webkit-appearance: none;
+        cursor: pointer;
+        opacity: 0;
+        pointer-events: auto;
+        transition: opacity .3s;
+
+        &::-webkit-slider-runnable-track {
+            @include size(100%, 3px);
+
+            background: linear-gradient(to right, map-get($colors, white) var(--progress), rgba(map-get($colors, white), 0.25) var(--progress));
+        }
+
+        &::-webkit-slider-thumb {
+            @include size(16px);
+
+            -webkit-appearance: none;
+            position: relative;
+            top: 50%;
+            transform: translate(0, -50%);
+            background: map-get($colors, white);
+            border-radius: 50%;
+        }
+    }
+}

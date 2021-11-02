@@ -3,6 +3,7 @@ import classNames from 'classnames'
 import './video-media.scss'
 import SvgIcon from '@/components/SvgIcon/SvgIcon'
 import VideoProgress from '@/components/VideoProgress/VideoProgress'
+import VideoVolume from '@/components/VideoVolume/VideoVolume'
 
 class VideoMedia extends Component {
     constructor () {
@@ -13,11 +14,13 @@ class VideoMedia extends Component {
             videoCurrentTime: 0,
             videoDuration: 0,
             videoBuffered: 0,
+            videoVolume: '0.5',
         }
 
         this.handleOnload = this.handleOnload.bind(this)
         this.handlePlay = this.handlePlay.bind(this)
         this.handlePause = this.handlePause.bind(this)
+        this.handleChangeVolume = this.handleChangeVolume.bind(this)
         this.handleToggle = this.handleToggle.bind(this)
         this.handleOnTracked = this.handleOnTracked.bind(this)
         this.handleOnProgress = this.handleOnProgress.bind(this)
@@ -42,6 +45,13 @@ class VideoMedia extends Component {
         this.videoEl.current.pause()
         this.setState({
             videoStatus: 0,
+        })
+    }
+
+    handleChangeVolume (e) {
+        this.videoEl.current.volume = e
+        this.setState({
+            videoVolume: e,
         })
     }
 
@@ -131,6 +141,10 @@ class VideoMedia extends Component {
                             <div className='video-media__time'>
                                 {this.transformTime}
                             </div>
+                            <VideoVolume
+                                initVolume={this.state.videoVolume}
+                                onVolumeChange={this.handleChangeVolume}
+                            />
                         </div>
                     </div>
                 </div>
