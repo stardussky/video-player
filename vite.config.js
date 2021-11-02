@@ -9,18 +9,11 @@ export default ({ mode }) => {
     process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
 
     return defineConfig({
+        // base: './',
         resolve: {
             alias: [
                 { find: '@', replacement: '/src' },
             ],
-        },
-        server: {
-            port: process.env.VITE_APP_PORT,
-            proxy: {
-                '^/assets': {
-                    target: process.env.VITE_APP_URL + 'src/',
-                },
-            },
         },
         plugins: [
             react(),
