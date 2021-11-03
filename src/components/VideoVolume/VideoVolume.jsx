@@ -29,7 +29,7 @@ const VideoVolume = ({ initVolume = '0.5', onVolumeChange }) => {
 
     return (
         <div
-            className='video-volume'
+            className='video-media__controls-item video-volume'
             style={{
                 '--progress': `${volume * 100}%`,
             }}

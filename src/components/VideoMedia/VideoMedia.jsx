@@ -4,12 +4,15 @@ import './video-media.scss'
 import SvgIcon from '@/components/SvgIcon/SvgIcon'
 import VideoProgress from '@/components/VideoProgress/VideoProgress'
 import VideoVolume from '@/components/VideoVolume/VideoVolume'
+import VideoSetting from '@/components/VideoSetting/VideoSetting'
 
 class VideoMedia extends Component {
     constructor () {
         super()
         this.videoEl = createRef()
         this.state = {
+            showControl: false,
+            // video status
             videoStatus: 0,
             videoCurrentTime: 0,
             videoDuration: 0,
@@ -104,6 +107,22 @@ class VideoMedia extends Component {
         this.videoEl.current.currentTime = duration * progress
     }
 
+    changeControlStatus (status) {
+        if (status) {
+            this.setState({
+                showControl: status,
+            })
+            return
+        }
+        this.setState({
+            showControl: !this.state.showControl,
+        })
+    }
+
+    get isShowControl () {
+        return this.state.videoStatus || this.state.showControl
+    }
+
     get transformTime () {
         return new Date(this.state.videoCurrentTime * 1000).toISOString().substr(11, 8)
     }
@@ -123,7 +142,7 @@ class VideoMedia extends Component {
                     {/* <source src='http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' /> */}
                 </video>
                 <div className={classNames('video-media__controls', {
-                    '-active': !this.state.videoStatus,
+                    '-active': !this.isShowControl,
                 })}
                 >
                     <span
@@ -141,24 +160,29 @@ class VideoMedia extends Component {
                             onSetProgress={this.handleSetProgress}
                         />
                         <div className='video-media__controls-list'>
-                            <div
-                                className='video-media__controls-item video-media__controls-status'
-                                onClick={this.handleToggleStatus}
-                            >
-                                <SvgIcon name={this.state.videoStatus ? 'pause' : 'play'} />
+                            <div className='video-media__controls-items'>
+                                <div
+                                    className='video-media__controls-item video-media__controls-status'
+                                    onClick={this.handleToggleStatus}
+                                >
+                                    <SvgIcon name={this.state.videoStatus ? 'pause' : 'play'} />
+                                </div>
+                                <div className='video-media__time'>
+                                    {this.transformTime}
+                                </div>
+                                <VideoVolume
+                                    initVolume={this.state.videoVolume}
+                                    onVolumeChange={this.handleChangeVolume}
+                                />
                             </div>
-                            <div className='video-media__time'>
-                                {this.transformTime}
-                            </div>
-                            <VideoVolume
-                                initVolume={this.state.videoVolume}
-                                onVolumeChange={this.handleChangeVolume}
-                            />
-                            <div
-                                className='video-media__controls-item video-media__controls-fullscreen'
-                                onClick={this.handleToggleFullscreen}
-                            >
-                                <SvgIcon name='fullscreen' />
+                            <div className='video-media__controls-items'>
+                                <VideoSetting />
+                                <div
+                                    className='video-media__controls-item video-media__controls-fullscreen'
+                                    onClick={this.handleToggleFullscreen}
+                                >
+                                    <SvgIcon name='fullscreen' />
+                                </div>
                             </div>
                         </div>
                     </div>
