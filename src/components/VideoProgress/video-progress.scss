@@ -89,8 +89,9 @@
     }
 
     &__time {
+        @include typo('list', 1);
+
         padding: $padding;
-        font-size: 14px;
         color: map-get($colors, white);
         background-color: rgba(map-get($colors, black), 0.5);
         transform: translate(-50%, -$padding * 2) translate(calc(var(--width, 0) * var(--hover-progress, 0) * 1px), 0);

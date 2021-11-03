@@ -4,7 +4,6 @@
     position: relative;
     display: flex;
     align-items: center;
-    font-size: 25px;
 
     &__main {
         @include size(100%);
@@ -24,6 +23,10 @@
 
         &.-active {
             opacity: 1;
+        }
+
+        .icon {
+            @include size(1.5rem);
         }
 
         @media (hover: hover) and (pointer: fine) {
@@ -79,7 +82,6 @@
 
     &__time {
         margin-left: $padding;
-        font-size: 16px;
         color: map-get($colors, white);
     }
 }

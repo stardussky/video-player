@@ -9,7 +9,7 @@ function SvgIcon (props) {
     return (
         <svg
             {...props}
-            className='svg-icon'
+            className='icon svg-icon'
             aria-hidden='true'
         >
             <use href={symbolId} />
