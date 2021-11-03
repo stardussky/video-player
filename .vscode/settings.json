@@ -10,4 +10,9 @@
     "extensions": [".html", ".js", ".jsx"]
   },
   "eslint.workingDirectories": ["./"],
+  "stylelint.validate": [
+    "scss",
+    "jsx",
+    "css"
+  ]
 }
