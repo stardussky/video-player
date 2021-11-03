@@ -1,0 +1,78 @@
+.video-setting {
+    &__main {
+        position: absolute;
+        top: -$padding * 5;
+        right: 0;
+        color: map-get($colors, white);
+        transform: translate(0, -100%);
+
+        > * {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            overflow: hidden;
+            width: 300px;
+        }
+
+        &::before {
+            @include size(100%, calc(var(--height) * 1px));
+
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(map-get($colors, black), 0.8);
+            z-index: -1;
+            transform-origin: bottom;
+            transform: scaleY(calc(var(--max-height) / var(--height)));
+            transition: transform .3s;
+        }
+    }
+
+    &__content {
+        @include size(100%);
+
+        opacity: 0;
+        transition: opacity .3s, transform .4s;
+        flex: 0 0 100%;
+
+        &:first-child {
+            opacity: 1;
+        }
+
+        &:last-child {
+            transform: translate(100%, 0);
+        }
+
+        .video-setting__main.-active & {
+            &:first-child {
+                transform: translate(-100%, 0);
+            }
+
+            &:last-child {
+                opacity: 1;
+                transform: translate(-100%, 0);
+            }
+        }
+    }
+
+    &__item {
+        &-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        &-option {
+            padding: $padding * 2;
+            transition: color .3s, background-color .3s;
+            cursor: pointer;
+            @media (hover: hover) and (pointer: fine) {
+                &:hover {
+                    color: map-get($colors, grey);
+                    background-color: rgba(map-get($colors, white), 0.2);
+                }
+            }
+        }
+    }
+}

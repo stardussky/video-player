@@ -18,6 +18,7 @@ class VideoMedia extends Component {
             videoDuration: 0,
             videoBuffered: 0,
             videoVolume: '0.5',
+            videoPlaybackRate: 1,
         }
 
         this.handleOnload = this.handleOnload.bind(this)
@@ -25,6 +26,7 @@ class VideoMedia extends Component {
         this.handlePause = this.handlePause.bind(this)
         this.handleToggleStatus = this.handleToggleStatus.bind(this)
         this.handleChangeVolume = this.handleChangeVolume.bind(this)
+        this.handleChangePlaybackRate = this.handleChangePlaybackRate.bind(this)
         this.handleToggleFullscreen = this.handleToggleFullscreen.bind(this)
         this.handleOnTracked = this.handleOnTracked.bind(this)
         this.handleOnProgress = this.handleOnProgress.bind(this)
@@ -65,6 +67,13 @@ class VideoMedia extends Component {
         this.videoEl.current.volume = e
         this.setState({
             videoVolume: e,
+        })
+    }
+
+    handleChangePlaybackRate (e) {
+        this.videoEl.current.playbackRate = e
+        this.setState({
+            videoPlaybackRate: e,
         })
     }
 
@@ -127,6 +136,20 @@ class VideoMedia extends Component {
         return new Date(this.state.videoCurrentTime * 1000).toISOString().substr(11, 8)
     }
 
+    get transformPlaybackRate () {
+        const map = new Map([
+            [0.25, '0.25'],
+            [0.5, '0.5'],
+            [0.75, '0.75'],
+            [1, '正常'],
+            [1.25, '1.25'],
+            [1.5, '1.5'],
+            [1.75, '1.75'],
+            [2, '2'],
+        ])
+        return map.get(this.state.videoPlaybackRate) || String(this.state.videoPlaybackRate)
+    }
+
     render () {
         return (
             <div className='video-media'>
@@ -176,7 +199,11 @@ class VideoMedia extends Component {
                                 />
                             </div>
                             <div className='video-media__controls-items'>
-                                <VideoSetting />
+                                <VideoSetting
+                                    transformPlaybackRate={this.transformPlaybackRate}
+                                    playbackRate={this.state.videoPlaybackRate}
+                                    onPlaybackChange={this.handleChangePlaybackRate}
+                                />
                                 <div
                                     className='video-media__controls-item video-media__controls-fullscreen'
                                     onClick={this.handleToggleFullscreen}
