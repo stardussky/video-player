@@ -63,3 +63,29 @@ button {
 
     background-color: transparent;
 }
+
+input[type="range"] {
+    position: relative;
+    height: 25px;
+    background-color: transparent;
+    -webkit-appearance: none;
+    cursor: pointer;
+    pointer-events: auto;
+
+    &::-webkit-slider-runnable-track {
+        @include size(100%, 3px);
+
+        background: linear-gradient(to right, map-get($colors, white) var(--progress), rgba(map-get($colors, white), 0.25) var(--progress));
+    }
+
+    &::-webkit-slider-thumb {
+        @include size(16px);
+
+        position: relative;
+        top: 50%;
+        background: map-get($colors, white);
+        border-radius: 50%;
+        -webkit-appearance: none;
+        transform: translate(0, -50%);
+    }
+}
