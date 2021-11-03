@@ -11,6 +11,7 @@ class VideoMedia extends Component {
         super()
         this.videoEl = createRef()
         this.state = {
+            showSetting: false,
             showControl: false,
             // video status
             videoStatus: 0,
@@ -31,6 +32,7 @@ class VideoMedia extends Component {
         this.handleOnTracked = this.handleOnTracked.bind(this)
         this.handleOnProgress = this.handleOnProgress.bind(this)
         this.handleSetProgress = this.handleSetProgress.bind(this)
+        this.handleChangeSettingStatus = this.handleChangeSettingStatus.bind(this)
     }
 
     handleOnload () {
@@ -117,7 +119,7 @@ class VideoMedia extends Component {
     }
 
     changeControlStatus (status) {
-        if (status) {
+        if (status !== undefined) {
             this.setState({
                 showControl: status,
             })
@@ -128,8 +130,21 @@ class VideoMedia extends Component {
         })
     }
 
+    handleChangeSettingStatus (status) {
+        this.changeControlStatus(status)
+        if (status !== undefined) {
+            this.setState({
+                showSetting: status,
+            })
+            return
+        }
+        this.setState({
+            showSetting: !this.state.showSetting,
+        })
+    }
+
     get isShowControl () {
-        return this.state.videoStatus || this.state.showControl
+        return !this.state.videoStatus || this.state.showControl
     }
 
     get transformTime () {
@@ -165,7 +180,7 @@ class VideoMedia extends Component {
                     {/* <source src='http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' /> */}
                 </video>
                 <div className={classNames('video-media__controls', {
-                    '-active': !this.isShowControl,
+                    '-active': this.isShowControl,
                 })}
                 >
                     <span
@@ -181,6 +196,11 @@ class VideoMedia extends Component {
                             onPause={this.handlePause}
                             onPlay={this.handlePlay}
                             onSetProgress={this.handleSetProgress}
+                        />
+                        <span
+                            className={classNames('video-media__setting-mask', {
+                                '-active': this.state.showSetting,
+                            })}
                         />
                         <div className='video-media__controls-list'>
                             <div className='video-media__controls-items'>
@@ -203,6 +223,7 @@ class VideoMedia extends Component {
                                     transformPlaybackRate={this.transformPlaybackRate}
                                     playbackRate={this.state.videoPlaybackRate}
                                     onPlaybackChange={this.handleChangePlaybackRate}
+                                    onChangeSettingStatus={this.handleChangeSettingStatus}
                                 />
                                 <div
                                     className='video-media__controls-item video-media__controls-fullscreen'

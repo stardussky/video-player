@@ -3,41 +3,64 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import SvgIcon from '@/components/SvgIcon/SvgIcon'
 import VideoPlaybackRate from '@/components/VideoPlaybackRate/VideoPlaybackRate'
+import blur from '@/functions/blur'
 import './video-setting.scss'
 
 const components = {
     playbackRate: VideoPlaybackRate,
 }
 
-const VideoSetting = ({ transformPlaybackRate, playbackRate, onPlaybackChange }) => {
-    const displayEl = useRef(null)
+const VideoSetting = ({ transformPlaybackRate, playbackRate, onPlaybackChange, onChangeSettingStatus }) => {
+    const videoSettingEl = useRef(null)
+    const displayContentEl = useRef(null)
     const contentEl = useRef(null)
     const [isOpen, setIsOpen] = useState(false)
-    const [currentType, setCurrentType] = useState('playbackRate')
+    const [currentType, setCurrentType] = useState(null)
     const [defaultHeight, setDefaultHeight] = useState(0)
     const [maxHeight, setMaxHeight] = useState(0)
 
     const DynamicComponent = components[currentType]
 
     useEffect(() => {
+        const destroyBlur = blur(videoSettingEl.current, () => {
+            setIsOpen(false)
+            setCurrentType(null)
+        })
+        return () => {
+            destroyBlur()
+        }
+    }, [])
+
+    useEffect(() => {
         if (currentType) {
             setMaxHeight(contentEl.current.scrollHeight)
             return
         }
-        setMaxHeight(displayEl.current.scrollHeight)
+        setMaxHeight(displayContentEl.current.scrollHeight)
     }, [currentType])
 
     useEffect(() => {
-        setDefaultHeight(displayEl.current.scrollHeight)
+        setDefaultHeight(displayContentEl.current.scrollHeight)
     }, [])
 
+    useEffect(() => {
+        onChangeSettingStatus(isOpen)
+    }, [isOpen])
+
     return (
-        <div className='video-setting'>
-            <div className='video-media__controls-item video-setting__display'>
+        <div
+            className='video-setting'
+            ref={videoSettingEl}
+        >
+            <div
+                className='video-media__controls-item video-setting__display'
+                onClick={() => setIsOpen(!isOpen)}
+            >
                 <SvgIcon name='setting' />
             </div>
             <div
                 className={classNames('video-setting__main', {
+                    '-open': isOpen,
                     '-active': currentType,
                 })}
                 style={{
@@ -46,7 +69,7 @@ const VideoSetting = ({ transformPlaybackRate, playbackRate, onPlaybackChange })
                 }}
             >
                 <div>
-                    <div className='video-setting__content' ref={displayEl}>
+                    <div className='video-setting__content' ref={displayContentEl}>
                         <ul>
                             <li className='video-setting__item' onClick={() => setCurrentType('playbackRate')}>
                                 <div className='video-setting__item-option video-setting__item-display'>
@@ -73,6 +96,7 @@ VideoSetting.propTypes = {
     transformPlaybackRate: PropTypes.string,
     playbackRate: PropTypes.number,
     onPlaybackChange: PropTypes.func,
+    onChangeSettingStatus: PropTypes.func,
 }
 
 export default VideoSetting

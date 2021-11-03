@@ -80,6 +80,19 @@
         }
     }
 
+    &__setting-mask {
+        @include size(100%);
+
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+
+        &.-active {
+            pointer-events: auto;
+        }
+    }
+
     &__time {
         margin-left: $padding;
         color: map-get($colors, white);
