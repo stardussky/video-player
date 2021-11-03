@@ -20,8 +20,9 @@ class VideoMedia extends Component {
         this.handleOnload = this.handleOnload.bind(this)
         this.handlePlay = this.handlePlay.bind(this)
         this.handlePause = this.handlePause.bind(this)
+        this.handleToggleStatus = this.handleToggleStatus.bind(this)
         this.handleChangeVolume = this.handleChangeVolume.bind(this)
-        this.handleToggle = this.handleToggle.bind(this)
+        this.handleToggleFullscreen = this.handleToggleFullscreen.bind(this)
         this.handleOnTracked = this.handleOnTracked.bind(this)
         this.handleOnProgress = this.handleOnProgress.bind(this)
         this.handleSetProgress = this.handleSetProgress.bind(this)
@@ -48,6 +49,15 @@ class VideoMedia extends Component {
         })
     }
 
+    handleToggleStatus () {
+        const { videoStatus } = this.state
+        if (!videoStatus) {
+            this.handlePlay()
+            return
+        }
+        this.handlePause()
+    }
+
     handleChangeVolume (e) {
         this.videoEl.current.volume = e
         this.setState({
@@ -55,13 +65,12 @@ class VideoMedia extends Component {
         })
     }
 
-    handleToggle () {
-        const { videoStatus } = this.state
-        if (!videoStatus) {
-            this.handlePlay()
+    handleToggleFullscreen () {
+        if (document.fullscreen) {
+            document.exitFullscreen()
             return
         }
-        this.handlePause()
+        this.videoEl.current.parentNode.requestFullscreen()
     }
 
     handleOnTracked () {
@@ -119,7 +128,7 @@ class VideoMedia extends Component {
                 >
                     <span
                         className='video-media__controls-mask'
-                        onClick={this.handleToggle}
+                        onClick={this.handleToggleStatus}
                     />
                     <div className='video-media__controls-main'>
                         <VideoProgress
@@ -133,8 +142,8 @@ class VideoMedia extends Component {
                         />
                         <div className='video-media__controls-list'>
                             <div
-                                className='video-media__controls-status'
-                                onClick={this.handleToggle}
+                                className='video-media__controls-item video-media__controls-status'
+                                onClick={this.handleToggleStatus}
                             >
                                 <SvgIcon name={this.state.videoStatus ? 'pause' : 'play'} />
                             </div>
@@ -145,6 +154,12 @@ class VideoMedia extends Component {
                                 initVolume={this.state.videoVolume}
                                 onVolumeChange={this.handleChangeVolume}
                             />
+                            <div
+                                className='video-media__controls-item video-media__controls-fullscreen'
+                                onClick={this.handleToggleFullscreen}
+                            >
+                                <SvgIcon name='fullscreen' />
+                            </div>
                         </div>
                     </div>
                 </div>
