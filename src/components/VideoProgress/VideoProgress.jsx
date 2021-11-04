@@ -21,14 +21,16 @@ class VideoProgress extends Component {
         this.handleStartDrag = this.handleStartDrag.bind(this)
         this.handleMove = this.handleMove.bind(this)
         this.handleReset = this.handleReset.bind(this)
+        this.handleResize = this.handleResize.bind(this)
     }
 
     componentDidMount () {
-        if (this.progressEl.current) {
-            this.setState({
-                width: this.progressEl.current.clientWidth,
-            })
-        }
+        this.handleResize()
+        window.addEventListener('resize', this.handleResize)
+    }
+
+    componentWillUnmount () {
+        window.removeEventListener('resize', this.handleResize)
     }
 
     handleHover () {
@@ -67,6 +69,7 @@ class VideoProgress extends Component {
         const x = clientX - left
         const clampX = Math.max(Math.min(x, clientWidth), 0)
         const progress = clampX / clientWidth
+
         this.setState({
             hoverProgress: progress,
         })
@@ -86,6 +89,14 @@ class VideoProgress extends Component {
         if (!this.state.isHover) {
             window.removeEventListener('mousemove', this.handleMove)
             window.removeEventListener('mouseup', this.handleReset)
+        }
+    }
+
+    handleResize () {
+        if (this.progressEl.current) {
+            this.setState({
+                width: this.progressEl.current.clientWidth,
+            })
         }
     }
 
@@ -129,7 +140,7 @@ class VideoProgress extends Component {
                     >
                         <VideoThumbnail
                             videoEl='.video-media__main'
-                            current={Math.ceil(this.hoverTime)}
+                            currentTime={Math.ceil(this.hoverTime)}
                         />
                         <div className='video-progress__time'>
                             {this.transformHoverTime}
