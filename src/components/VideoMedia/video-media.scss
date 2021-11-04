@@ -94,6 +94,8 @@
     }
 
     &__time {
+        @include typo('list', 1);
+
         margin-left: $padding;
         color: map-get($colors, white);
     }

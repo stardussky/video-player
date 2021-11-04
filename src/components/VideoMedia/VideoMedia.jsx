@@ -151,6 +151,10 @@ class VideoMedia extends Component {
         return new Date(this.state.videoCurrentTime * 1000).toISOString().substr(11, 8)
     }
 
+    get transformTotalTime () {
+        return new Date(this.state.videoDuration * 1000).toISOString().substr(11, 8)
+    }
+
     get transformPlaybackRate () {
         const map = new Map([
             [0.25, '0.25'],
@@ -211,7 +215,7 @@ class VideoMedia extends Component {
                                     <SvgIcon name={this.state.videoStatus ? 'pause' : 'play'} />
                                 </div>
                                 <div className='video-media__time'>
-                                    {this.transformTime}
+                                    {this.transformTime} / {this.transformTotalTime}
                                 </div>
                                 <VideoVolume
                                     initVolume={this.state.videoVolume}
