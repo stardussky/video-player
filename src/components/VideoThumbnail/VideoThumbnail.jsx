@@ -2,49 +2,49 @@ import React, { useState, useEffect, useRef } from 'react'
 import PropTypes from 'prop-types'
 import './video-thumbnail.scss'
 
-function VideoThumbnail (props) {
-    const [thumbnails, setThumbnails] = useState([])
+function VideoThumbnail ({ videoEl, currentTime }) {
+    const [video, setVideo] = useState(null)
+    const [thumbnails, setThumbnails] = useState(new Map())
     const thumbnailEl = useRef(null)
-    // TODO 改成hover載入
-    const preLoadThumbnails = () => {
-        let videoEl = document.querySelector(props.videoEl)
-        if (videoEl && videoEl instanceof HTMLVideoElement) {
-            videoEl = videoEl.cloneNode(true)
-            videoEl.crossOrigin = 'anonymous'
 
-            videoEl.addEventListener('loadedmetadata', async () => {
-                const { clientWidth, clientHeight } = thumbnailEl.current
-                const canvas = document.createElement('canvas')
-                canvas.width = clientWidth
-                canvas.height = clientHeight
-                const ctx = canvas.getContext('2d')
-
-                const { duration } = videoEl
-
-                for (let i = 0; i <= Math.ceil(duration); i++) {
-                    videoEl.currentTime = i
-                    await new Promise(resolve => {
-                        videoEl.addEventListener('canplay', () => {
-                            ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height)
-                            const image = canvas.toDataURL('image/webp')
-                            setThumbnails((thumbnails) => [...thumbnails, image])
-                            resolve(image)
-                        }, { once: true })
-                    })
-                }
-            })
+    const initVideo = () => {
+        let el = document.querySelector(videoEl)
+        if (el && el instanceof HTMLVideoElement) {
+            el = el.cloneNode(true)
+            el.crossOrigin = 'anonymous'
+            setVideo(el)
         }
     }
 
+    const getThumbnail = (duration) => {
+        if (!video || thumbnails.has(duration)) return
+        const { clientWidth, clientHeight } = thumbnailEl.current
+        const canvas = document.createElement('canvas')
+        canvas.width = clientWidth
+        canvas.height = clientHeight
+        const ctx = canvas.getContext('2d')
+
+        video.currentTime = duration
+        video.addEventListener('canplay', () => {
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+            const image = canvas.toDataURL('image/webp')
+            thumbnails.set(duration, image)
+            setThumbnails((thumbnails) => new Map([...thumbnails]))
+        }, { once: true })
+    }
+
     useEffect(() => {
-        preLoadThumbnails()
+        initVideo()
     }, [])
+    useEffect(() => {
+        getThumbnail(currentTime)
+    }, [currentTime])
 
     return (
         <div className='video-thumbnail' ref={thumbnailEl}>
             <div
                 style={{
-                    background: `#000 url(${thumbnails[Math.ceil(props.current)]}) no-repeat center / cover`,
+                    background: `#111 url(${thumbnails.get(Math.ceil(currentTime))}) no-repeat center / cover`,
                 }}
             />
         </div>
@@ -53,7 +53,7 @@ function VideoThumbnail (props) {
 
 VideoThumbnail.propTypes = {
     videoEl: PropTypes.string,
-    current: PropTypes.number,
+    currentTime: PropTypes.number,
 }
 
 export default VideoThumbnail
