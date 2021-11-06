@@ -8,6 +8,7 @@ import VideoVolume from '@/components/VideoVolume/VideoVolume'
 import VideoAutoNext from '@/components/VideoAutoNext/VideoAutoNext'
 import VideoNext from '@/components/VideoNext/VideoNext'
 import VideoSetting from '@/components/VideoSetting/VideoSetting'
+import transformTime from '@/functions/transformTime'
 
 class VideoMedia extends Component {
     constructor (props) {
@@ -237,11 +238,15 @@ class VideoMedia extends Component {
     }
 
     get transformTime () {
-        return new Date(this.state.videoCurrentTime * 1000).toISOString().substr(11, 8)
+        const { videoCurrentTime } = this.state
+
+        return transformTime(videoCurrentTime)
     }
 
     get transformTotalTime () {
-        return new Date(this.state.videoDuration * 1000).toISOString().substr(11, 8)
+        const { videoDuration } = this.state
+
+        return transformTime(videoDuration)
     }
 
     get transformPlaybackRate () {

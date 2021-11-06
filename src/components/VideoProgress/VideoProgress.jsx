@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import './video-progress.scss'
 import VideoThumbnail from '@/components/VideoThumbnail/VideoThumbnail'
+import transformTime from '@/functions/transformTime'
 
 class VideoProgress extends Component {
     constructor (props) {
@@ -112,7 +113,7 @@ class VideoProgress extends Component {
     }
 
     get transformHoverTime () {
-        return new Date(this.hoverTime * 1000).toISOString().substr(11, 8)
+        return transformTime(this.hoverTime)
     }
 
     render () {
