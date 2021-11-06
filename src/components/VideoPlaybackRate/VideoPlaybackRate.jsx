@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import './video-playback-rate.scss'
 
-const VideoPlaybackRate = ({ onBack, transformPlaybackRate, playbackRate, onPlaybackChange }) => {
+const VideoPlaybackRate = ({ onBack, transformPlaybackRate, playbackRate, onChangePlaybackRate }) => {
     const rate = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
     return (
         <ul className='video-playback-rate'>
@@ -18,7 +18,7 @@ const VideoPlaybackRate = ({ onBack, transformPlaybackRate, playbackRate, onPlay
                     <li
                         className='video-setting__item'
                         key={value}
-                        onClick={() => onPlaybackChange(value)}
+                        onClick={() => onChangePlaybackRate(value)}
                     >
                         <div className='video-setting__item-option'>
                             {value}
@@ -39,7 +39,7 @@ const VideoPlaybackRate = ({ onBack, transformPlaybackRate, playbackRate, onPlay
                         max='2'
                         step='0.01'
                         value={playbackRate}
-                        onChange={(e) => onPlaybackChange(Number(e.target.value))}
+                        onChange={(e) => onChangePlaybackRate(Number(e.target.value))}
                     />
                 </div>
             </li>
@@ -51,7 +51,7 @@ VideoPlaybackRate.propTypes = {
     onBack: PropTypes.func,
     transformPlaybackRate: PropTypes.string,
     playbackRate: PropTypes.number,
-    onPlaybackChange: PropTypes.func,
+    onChangePlaybackRate: PropTypes.func,
 }
 
 export default VideoPlaybackRate

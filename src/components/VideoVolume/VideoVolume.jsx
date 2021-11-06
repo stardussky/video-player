@@ -3,14 +3,14 @@ import PropTypes from 'prop-types'
 import SvgIcon from '@/components/SvgIcon/SvgIcon'
 import './video-volume.scss'
 
-const VideoVolume = ({ initVolume = '0.5', onVolumeChange }) => {
+const VideoVolume = ({ initVolume = '0.5', onChangeVolume }) => {
     // TODO 音量圖示根據大小變換
     const [volume, setVolume] = useState(initVolume)
     const [tempVolume, setTempVolume] = useState(volume)
     const [isMuted, setIsMuted] = useState(false)
 
     useEffect(() => {
-        onVolumeChange(volume)
+        onChangeVolume(volume)
     }, [volume])
 
     const handleChange = (e) => {
@@ -50,7 +50,7 @@ const VideoVolume = ({ initVolume = '0.5', onVolumeChange }) => {
 
 VideoVolume.propTypes = {
     initVolume: PropTypes.string,
-    onVolumeChange: PropTypes.func,
+    onChangeVolume: PropTypes.func,
 }
 
 export default VideoVolume

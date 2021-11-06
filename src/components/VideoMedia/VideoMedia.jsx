@@ -25,13 +25,22 @@ class VideoMedia extends Component {
         }
         this.perTimeSeek = 5
 
+        // load
         this.handleOnload = this.handleOnload.bind(this)
+        // video status
         this.handlePlay = this.handlePlay.bind(this)
         this.handlePause = this.handlePause.bind(this)
         this.handleToggleStatus = this.handleToggleStatus.bind(this)
+        this.handleVideoStatus = this.handleVideoStatus.bind(this)
+        // volume
         this.handleChangeVolume = this.handleChangeVolume.bind(this)
+        this.handleVolumeStatus = this.handleVolumeStatus.bind(this)
+        // playback rate
         this.handleChangePlaybackRate = this.handleChangePlaybackRate.bind(this)
+        this.handlePlaybackRateStatus = this.handlePlaybackRateStatus.bind(this)
+        // fullscreen
         this.handleToggleFullscreen = this.handleToggleFullscreen.bind(this)
+
         this.handleOnTracked = this.handleOnTracked.bind(this)
         this.handleOnProgress = this.handleOnProgress.bind(this)
         this.handleSetProgress = this.handleSetProgress.bind(this)
@@ -59,39 +68,50 @@ class VideoMedia extends Component {
         if (videoEnded) this.videoEl.current.currentTime = 0
 
         this.videoEl.current.play()
-        this.setState({
-            videoStatus: 1,
-        })
     }
 
     handlePause () {
         this.videoEl.current.pause()
-        this.setState({
-            videoStatus: 0,
-        })
     }
 
     handleToggleStatus () {
-        const { paused } = this.videoEl.current
+        const { videoStatus } = this.state
 
-        if (paused) {
+        if (!videoStatus) {
             this.handlePlay()
             return
         }
         this.handlePause()
     }
 
+    handleVideoStatus () {
+        const { paused } = this.videoEl.current
+        this.setState({
+            videoStatus: !paused | 0,
+        })
+    }
+
     handleChangeVolume (e) {
         this.videoEl.current.volume = e
+    }
+
+    handleVolumeStatus () {
+        const { volume } = this.videoEl.current
+
         this.setState({
-            videoVolume: e,
+            videoVolume: String(volume),
         })
     }
 
     handleChangePlaybackRate (e) {
         this.videoEl.current.playbackRate = e
+    }
+
+    handlePlaybackRateStatus () {
+        const { playbackRate } = this.videoEl.current
+
         this.setState({
-            videoPlaybackRate: e,
+            videoPlaybackRate: playbackRate,
         })
     }
 
@@ -136,18 +156,6 @@ class VideoMedia extends Component {
         this.videoEl.current.currentTime = videoDuration * progress
     }
 
-    changeControlStatus (status) {
-        if (status !== undefined) {
-            this.setState({
-                showControl: status,
-            })
-            return
-        }
-        this.setState({
-            showControl: !this.state.showControl,
-        })
-    }
-
     handleChangeSettingStatus (status) {
         this.changeControlStatus(status)
         if (status !== undefined) {
@@ -174,6 +182,18 @@ class VideoMedia extends Component {
         if (code === 'ArrowLeft') {
             this.videoEl.current.currentTime -= this.perTimeSeek
         }
+        this.changeControlStatus(true, true)
+    }
+
+    changeControlStatus (status, autoClose = false) {
+        status = status === undefined ? !this.state.showControl : status
+        window.clearTimeout(this.controlTimer)
+        this.controlTimer = window.setTimeout(() => {
+            this.setState({
+                showControl: status,
+            })
+            if (status && autoClose) this.changeControlStatus(false)
+        }, status ? 0 : 2000)
     }
 
     get isShowControl () {
@@ -209,6 +229,10 @@ class VideoMedia extends Component {
                     className='video-media__main'
                     ref={this.videoEl}
                     onLoadedMetadata={this.handleOnload}
+                    onPlay={this.handleVideoStatus}
+                    onPause={this.handleVideoStatus}
+                    onVolumeChange={this.handleVolumeStatus}
+                    onRateChange={this.handlePlaybackRateStatus}
                     onTimeUpdate={this.handleOnTracked}
                     onSeeking={this.handleOnTracked}
                     onProgress={this.handleOnProgress}
@@ -253,14 +277,14 @@ class VideoMedia extends Component {
                                 </div>
                                 <VideoVolume
                                     initVolume={this.state.videoVolume}
-                                    onVolumeChange={this.handleChangeVolume}
+                                    onChangeVolume={this.handleChangeVolume}
                                 />
                             </div>
                             <div className='video-media__controls-items'>
                                 <VideoSetting
                                     transformPlaybackRate={this.transformPlaybackRate}
                                     playbackRate={this.state.videoPlaybackRate}
-                                    onPlaybackChange={this.handleChangePlaybackRate}
+                                    onChangePlaybackRate={this.handleChangePlaybackRate}
                                     onChangeSettingStatus={this.handleChangeSettingStatus}
                                 />
                                 <div

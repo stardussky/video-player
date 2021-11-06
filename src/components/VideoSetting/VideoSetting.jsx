@@ -10,7 +10,8 @@ const components = {
     playbackRate: VideoPlaybackRate,
 }
 
-const VideoSetting = ({ transformPlaybackRate, playbackRate, onPlaybackChange, onChangeSettingStatus }) => {
+const VideoSetting = ({ transformPlaybackRate, playbackRate, onChangePlaybackRate, onChangeSettingStatus }) => {
+    // TODO icon 提示
     const videoSettingEl = useRef(null)
     const displayContentEl = useRef(null)
     const contentEl = useRef(null)
@@ -82,7 +83,7 @@ const VideoSetting = ({ transformPlaybackRate, playbackRate, onPlaybackChange, o
                     <div className='video-setting__content' ref={contentEl}>
                         {
                             currentType
-                                ? <DynamicComponent onBack={(e) => setCurrentType(e)} transformPlaybackRate={transformPlaybackRate} playbackRate={playbackRate} onPlaybackChange={onPlaybackChange} />
+                                ? <DynamicComponent onBack={(e) => setCurrentType(e)} transformPlaybackRate={transformPlaybackRate} playbackRate={playbackRate} onChangePlaybackRate={onChangePlaybackRate} />
                                 : null
                         }
                     </div>
@@ -95,7 +96,7 @@ const VideoSetting = ({ transformPlaybackRate, playbackRate, onPlaybackChange, o
 VideoSetting.propTypes = {
     transformPlaybackRate: PropTypes.string,
     playbackRate: PropTypes.number,
-    onPlaybackChange: PropTypes.func,
+    onChangePlaybackRate: PropTypes.func,
     onChangeSettingStatus: PropTypes.func,
 }
 
