@@ -8,6 +8,7 @@ import VideoSetting from '@/components/VideoSetting/VideoSetting'
 
 class VideoMedia extends Component {
     constructor () {
+        // TODO cookie 影片時間
         super()
         this.videoEl = createRef()
         this.state = {
@@ -20,7 +21,9 @@ class VideoMedia extends Component {
             videoBuffered: 0,
             videoVolume: '0.5',
             videoPlaybackRate: 1,
+            videoEnded: false,
         }
+        this.perTimeSeek = 5
 
         this.handleOnload = this.handleOnload.bind(this)
         this.handlePlay = this.handlePlay.bind(this)
@@ -33,6 +36,15 @@ class VideoMedia extends Component {
         this.handleOnProgress = this.handleOnProgress.bind(this)
         this.handleSetProgress = this.handleSetProgress.bind(this)
         this.handleChangeSettingStatus = this.handleChangeSettingStatus.bind(this)
+        this.handleKeydown = this.handleKeydown.bind(this)
+    }
+
+    componentDidMount () {
+        window.addEventListener('keydown', this.handleKeydown)
+    }
+
+    componentWillUnmount () {
+        window.removeEventListener('keydown', this.handleKeydown)
     }
 
     handleOnload () {
@@ -43,6 +55,9 @@ class VideoMedia extends Component {
     }
 
     handlePlay () {
+        const { videoEnded } = this.state
+        if (videoEnded) this.videoEl.current.currentTime = 0
+
         this.videoEl.current.play()
         this.setState({
             videoStatus: 1,
@@ -57,8 +72,9 @@ class VideoMedia extends Component {
     }
 
     handleToggleStatus () {
-        const { videoStatus } = this.state
-        if (!videoStatus) {
+        const { paused } = this.videoEl.current
+
+        if (paused) {
             this.handlePlay()
             return
         }
@@ -88,21 +104,23 @@ class VideoMedia extends Component {
     }
 
     handleOnTracked () {
-        const { currentTime } = this.videoEl.current
+        const { currentTime, duration } = this.videoEl.current
 
         this.setState({
             videoCurrentTime: currentTime,
+            videoEnded: currentTime === duration,
         })
     }
 
     handleOnProgress () {
         // TODO buffered顯示問題
-        const { buffered, currentTime, duration } = this.videoEl.current
+        const { videoCurrentTime, videoDuration } = this.state
+        const { buffered } = this.videoEl.current
 
         let bufferProgress = 0
         for (let i = 0; i < buffered.length; i++) {
-            if (buffered.start(buffered.length - 1 - i) < currentTime) {
-                bufferProgress = (buffered.end(buffered.length - 1 - i) / duration)
+            if (buffered.start(buffered.length - 1 - i) < videoCurrentTime) {
+                bufferProgress = (buffered.end(buffered.length - 1 - i) / videoDuration)
                 break
             }
         }
@@ -113,9 +131,9 @@ class VideoMedia extends Component {
     }
 
     handleSetProgress (progress) {
-        const { duration } = this.videoEl.current
+        const { videoDuration } = this.state
 
-        this.videoEl.current.currentTime = duration * progress
+        this.videoEl.current.currentTime = videoDuration * progress
     }
 
     changeControlStatus (status) {
@@ -141,6 +159,21 @@ class VideoMedia extends Component {
         this.setState({
             showSetting: !this.state.showSetting,
         })
+    }
+
+    handleKeydown (e) {
+        const { code } = e
+        if (code === 'Space') {
+            this.handleToggleStatus()
+        }
+        if (code === 'ArrowRight') {
+            const { videoCurrentTime, videoDuration } = this.state
+            const time = Math.min(videoCurrentTime + this.perTimeSeek, videoDuration)
+            this.videoEl.current.currentTime = time
+        }
+        if (code === 'ArrowLeft') {
+            this.videoEl.current.currentTime -= this.perTimeSeek
+        }
     }
 
     get isShowControl () {
@@ -194,9 +227,10 @@ class VideoMedia extends Component {
                     <div className='video-media__controls-main'>
                         <VideoProgress
                             status={this.state.videoStatus}
-                            current={this.state.videoCurrentTime}
+                            currentTime={this.state.videoCurrentTime}
                             duration={this.state.videoDuration}
                             buffered={this.state.videoBuffered}
+                            ended={this.state.videoEnded}
                             onPause={this.handlePause}
                             onPlay={this.handlePlay}
                             onSetProgress={this.handleSetProgress}
@@ -212,7 +246,7 @@ class VideoMedia extends Component {
                                     className='video-media__controls-item video-media__controls-status'
                                     onClick={this.handleToggleStatus}
                                 >
-                                    <SvgIcon name={this.state.videoStatus ? 'pause' : 'play'} />
+                                    <SvgIcon name={this.state.videoEnded ? 'replay' : this.state.videoStatus ? 'pause' : 'play'} />
                                 </div>
                                 <div className='video-media__time'>
                                     {this.transformTime} / {this.transformTotalTime}

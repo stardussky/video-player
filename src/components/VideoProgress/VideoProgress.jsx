@@ -80,11 +80,14 @@ class VideoProgress extends Component {
     }
 
     handleReset () {
+        const { ended, onPlay } = this.props
         this.setState({
             canDrag: false,
         })
         if (this.beforeStatus) {
-            this.props.onPlay()
+            if (!ended) {
+                onPlay()
+            }
         }
         if (!this.state.isHover) {
             window.removeEventListener('mousemove', this.handleMove)
@@ -101,7 +104,7 @@ class VideoProgress extends Component {
     }
 
     get currentProgress () {
-        return this.props.current / this.props.duration
+        return this.props.currentTime / this.props.duration
     }
 
     get hoverTime () {
@@ -154,9 +157,10 @@ class VideoProgress extends Component {
 
 VideoProgress.propTypes = {
     status: PropTypes.number,
-    current: PropTypes.number,
+    currentTime: PropTypes.number,
     duration: PropTypes.number,
     buffered: PropTypes.number,
+    ended: PropTypes.bool,
     onSetProgress: PropTypes.func,
     onPlay: PropTypes.func,
     onPause: PropTypes.func,
