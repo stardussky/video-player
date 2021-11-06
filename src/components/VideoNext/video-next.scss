@@ -1,0 +1,41 @@
+.video-next {
+    &__image {
+        @include aspect(9 / 16);
+
+        width: 400px;
+        background-color: red;
+        margin-bottom: $padding;
+    }
+
+    &__info {
+        color: map-get($colors, white);
+        margin-bottom: $padding;
+    }
+
+    &__title {
+        @include typo('heading', 1);
+
+        margin-bottom: $padding;
+    }
+
+    &__content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        > * {
+            flex: 0 0 calc(50% - #{$padding / 2});
+        }
+    }
+
+    &__button {
+        padding: $padding * 2;
+        color: map-get($colors, white);
+        background-color: map-get($colors, deep);
+        cursor: pointer;
+
+        &:last-of-type {
+            background-color: map-get($colors, dark);
+        }
+    }
+}
