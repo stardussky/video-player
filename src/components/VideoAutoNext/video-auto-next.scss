@@ -1,0 +1,33 @@
+.video-auto-next {
+    &__main {
+        @include size(40px, 15px);
+
+        background-color: rgba(map-get($colors, white), 0.5);
+        border-radius: 20px;
+    }
+
+    &__button {
+        @include size(20px);
+
+        position: relative;
+        top: 50%;
+        transform: translate(0, -50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: map-get($colors, white);
+        background-color: map-get($colors, dark);
+        border-radius: 50%;
+        transition: transform .3s, background-color .3s, color .3s;
+
+        .video-auto-next.-active & {
+            transform: translate(100%, -50%);
+            color: map-get($colors, dark);
+            background-color: map-get($colors, white);
+        }
+
+        .icon {
+            @include size(0.6rem);
+        }
+    }
+}
