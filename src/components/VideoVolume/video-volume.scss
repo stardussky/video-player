@@ -15,7 +15,11 @@
 
     &__range {
         margin-left: $padding;
+        width: 100px;
         opacity: 0;
         transition: opacity .3s;
+        @include media-breakpoint-down(tablet) {
+            width: 50px;
+        }
     }
 }

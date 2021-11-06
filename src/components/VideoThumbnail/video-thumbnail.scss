@@ -1,7 +1,8 @@
 .video-thumbnail {
     @include aspect(9 / 16);
 
-    width: 300px;
+    width: 200px;
+    border: 3px solid map-get($colors, white);
 
     > * {
         @include size(100%);

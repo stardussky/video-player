@@ -27,6 +27,9 @@
 
         .icon {
             @include size(1.5rem);
+            @include media-breakpoint-down(tablet) {
+                @include size(1rem);
+            }
         }
 
         @media (hover: hover) and (pointer: fine) {
@@ -67,6 +70,9 @@
             > * {
                 & ~ * {
                     margin-left: $padding * 3;
+                    @include media-breakpoint-down(tablet) {
+                        margin-left: $padding;
+                    }
                 }
             }
         }
@@ -77,6 +83,9 @@
             justify-content: center;
             padding: $padding;
             cursor: pointer;
+            @include media-breakpoint-down(tablet) {
+                padding: $padding / 2;
+            }
         }
     }
 
@@ -96,7 +105,6 @@
     &__time {
         @include typo('list', 1);
 
-        margin-left: $padding;
         color: map-get($colors, white);
     }
 }
