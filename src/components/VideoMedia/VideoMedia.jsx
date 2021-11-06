@@ -80,6 +80,7 @@ class VideoMedia extends Component {
         this.setState({
             videoDuration: duration,
         })
+        this.loadedPreset()
     }
 
     handlePlay () {
@@ -227,6 +228,10 @@ class VideoMedia extends Component {
         }, status ? 0 : 2000)
     }
 
+    loadedPreset () {
+        this.handleChangeIsPlayNext(true)
+    }
+
     get isShowControl () {
         const { videoStatus, showControl } = this.state
         return !videoStatus || showControl
@@ -278,7 +283,7 @@ class VideoMedia extends Component {
                         onSeeking={this.handleOnTracked}
                         onProgress={this.handleOnProgress}
                     >
-                        <source src={this.props.source} type='video/mp4' />
+                        <source src={this.props.source.source} type='video/mp4' />
                     </video>
                 </div>
                 <div className={classNames('video-media__controls', {
@@ -295,7 +300,7 @@ class VideoMedia extends Component {
                         })}
                     >
                         {this.isInfoNext
-                            ? <VideoNext onChangeIsPlayNext={this.handleChangeIsPlayNext} onNext={this.props.onChangeNextVideo} />
+                            ? <VideoNext nextSource={this.props.nextSource} onChangeIsPlayNext={this.handleChangeIsPlayNext} onNext={this.props.onChangeNextVideo} />
                             : null}
                     </div>
                     <div className='video-media__controls-main'>
@@ -360,7 +365,8 @@ class VideoMedia extends Component {
 }
 
 VideoMedia.propTypes = {
-    source: PropTypes.string,
+    source: PropTypes.object,
+    nextSource: PropTypes.object,
     onChangeNextVideo: PropTypes.func,
 }
 

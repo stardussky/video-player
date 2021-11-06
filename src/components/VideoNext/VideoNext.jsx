@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import PropTypes from 'prop-types'
 import './video-next.scss'
 
-const VideoNext = ({ duration = 3, onChangeIsPlayNext, onNext }) => {
+const VideoNext = ({ nextSource, duration = 3, onChangeIsPlayNext, onNext }) => {
     const timer = useRef(null)
     const [countNumber, setCountNumber] = useState(duration)
 
@@ -36,8 +36,11 @@ const VideoNext = ({ duration = 3, onChangeIsPlayNext, onNext }) => {
         <div className='video-next'>
             <div className='video-next__main'>
                 <p className='video-next__info'>下一個影片將在{countNumber}秒後播放</p>
-                <div className='video-next__image' />
-                {/* <p className='video-next__title'>title</p> */}
+                <div
+                    className='video-next__image'
+                    style={{ background: `#111 url(${nextSource.thumbnail}) no-repeat center / cover` }}
+                />
+                {/* <p className='video-next__title'>{nextSource.name}</p> */}
                 <div className='video-next__content'>
                     <button className='video-next__button' onClick={cancelCount}>取消</button>
                     <button className='video-next__button' onClick={onNext}>立即播放</button>
@@ -48,6 +51,7 @@ const VideoNext = ({ duration = 3, onChangeIsPlayNext, onNext }) => {
 }
 
 VideoNext.propTypes = {
+    nextSource: PropTypes.object,
     duration: PropTypes.number,
     onChangeIsPlayNext: PropTypes.func,
     onNext: PropTypes.func,
