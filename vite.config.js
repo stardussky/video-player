@@ -10,6 +10,9 @@ export default ({ mode }) => {
 
     return defineConfig({
         base: './',
+        server: {
+            host: '0.0.0.0',
+        },
         resolve: {
             alias: [
                 { find: '@', replacement: '/src' },

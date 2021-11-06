@@ -87,5 +87,8 @@ input[type="range"] {
         border-radius: 50%;
         -webkit-appearance: none;
         transform: translate(0, -50%);
+        @include media-breakpoint-down(tablet) {
+            @include size(12px);
+        }
     }
 }

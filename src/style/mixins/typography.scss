@@ -45,8 +45,11 @@ $font-family: (
         @if ($type == 1) {
             font-size: 14px;
             font-weight: map-get($font-weight, normal);
-            line-height: 2.14;
-            letter-spacing: 2.5px;
+            line-height: 1.5;
+            letter-spacing: 1.6px;
+            @include media-breakpoint-down(tablet) {
+                font-size: 12px;
+            }
         }
         @else {
             @error '#{$level}：沒有這個type';

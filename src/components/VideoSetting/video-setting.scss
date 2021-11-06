@@ -8,6 +8,9 @@
         transition: opacity .3s;
         transform: translate(0, -100%);
         pointer-events: none;
+        @include media-breakpoint-down(tablet) {
+            top: -$padding * 3;
+        }
 
         &.-open {
             opacity: 1;
@@ -24,6 +27,9 @@
             justify-content: space-between;
             overflow: hidden;
             width: 300px;
+            @include media-breakpoint-down(tablet) {
+                width: 250px;
+            }
         }
 
         &::before {
@@ -44,11 +50,19 @@
 
     &__content {
         @include size(100%);
+        @include typo('list', 1);
 
+        overflow: auto;
         opacity: 0;
         flex: 0 0 100%;
         transition: opacity .3s, transform .4s;
         transition-delay: 0.3s;
+        @include media-breakpoint-down(desktop) {
+            max-height: 250px;
+        }
+        @include media-breakpoint-down(tablet) {
+            max-height: 125px;
+        }
 
         &:first-child {
             opacity: 1;
@@ -85,6 +99,9 @@
             padding: $padding * 2;
             transition: color .3s, background-color .3s;
             cursor: pointer;
+            @include media-breakpoint-down(tablet) {
+                padding: $padding;
+            }
             @media (hover: hover) and (pointer: fine) {
                 &:hover {
                     color: map-get($colors, grey);

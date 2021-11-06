@@ -3,6 +3,10 @@
 
     width: 200px;
     border: 3px solid map-get($colors, white);
+    @include media-breakpoint-down(tablet) {
+        width: 150px;
+        border-width: 2px;
+    }
 
     > * {
         @include size(100%);

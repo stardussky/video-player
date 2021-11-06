@@ -2,6 +2,9 @@
     position: relative;
     padding: $padding * 2 0;
     cursor: pointer;
+    @include media-breakpoint-down(tablet) {
+        padding: $padding 0;
+    }
 
     @media (hover: hover) and (pointer: fine) {
         &:hover {
@@ -64,6 +67,9 @@
             background-color: map-get($colors, third);
             border-radius: 50%;
             transform: translate(-50%, -50%) translate(calc(var(--width, 0) * var(--progress, 0) * 1px), 0);
+            @include media-breakpoint-down(tablet) {
+                @include size(16px);
+            }
         }
     }
 
@@ -90,6 +96,9 @@
 
         .video-thumbnail {
             transform: translate(0, -$padding * 4);
+            @include media-breakpoint-down(tablet) {
+                transform: translate(0, -$padding * 2);
+            }
         }
 
         &.-active {
@@ -107,5 +116,8 @@
         background-color: rgba(map-get($colors, black), 0.5);
         transform: translate(0, -$padding * 2);
         border-radius: 5px;
+        @include media-breakpoint-down(tablet) {
+            transform: translate(0, -$padding);
+        }
     }
 }

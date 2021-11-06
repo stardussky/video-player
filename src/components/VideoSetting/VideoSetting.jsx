@@ -34,14 +34,14 @@ const VideoSetting = ({ transformPlaybackRate, initPlaybackRate, onChangePlaybac
 
     useEffect(() => {
         if (currentType) {
-            setMaxHeight(contentEl.current.scrollHeight)
+            setMaxHeight(contentEl.current.clientHeight)
             return
         }
-        setMaxHeight(displayContentEl.current.scrollHeight)
+        setMaxHeight(displayContentEl.current.clientHeight)
     }, [currentType])
 
     useEffect(() => {
-        setDefaultHeight(displayContentEl.current.scrollHeight)
+        setDefaultHeight(displayContentEl.current.clientHeight)
     }, [])
 
     useEffect(() => {

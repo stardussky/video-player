@@ -57,6 +57,9 @@
             justify-content: flex-end;
             padding: $padding $padding * 2;
             flex-direction: column;
+            @include media-breakpoint-down(tablet) {
+                padding: $padding / 2 $padding;
+            }
         }
 
         &-info {
@@ -102,6 +105,12 @@
         &-items {
             display: flex;
             align-items: center;
+
+            .video-volume {
+                @include media-breakpoint-down(tablet) {
+                    display: none;
+                }
+            }
 
             > * {
                 & ~ * {

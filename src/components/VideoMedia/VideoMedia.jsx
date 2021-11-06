@@ -273,6 +273,7 @@ class VideoMedia extends Component {
             <div className='video-media'>
                 <div className='video-media__main'>
                     <video
+                        playsInline
                         ref={this.videoEl}
                         onLoadedMetadata={this.handleOnload}
                         onPlay={this.handleVideoStatus}
