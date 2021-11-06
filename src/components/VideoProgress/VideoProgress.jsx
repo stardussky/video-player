@@ -144,7 +144,7 @@ class VideoProgress extends Component {
                     >
                         <div className='video-progress__thumbnail-main'>
                             <VideoThumbnail
-                                videoEl='.video-media__main'
+                                videoEl='.video-media__main video'
                                 currentTime={Math.ceil(this.hoverTime)}
                             />
                             <div className='video-progress__time'>
