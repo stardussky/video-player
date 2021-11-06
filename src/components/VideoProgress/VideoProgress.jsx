@@ -141,12 +141,14 @@ class VideoProgress extends Component {
                         '-active': this.state.isHover || this.state.canDrag,
                     })}
                     >
-                        <VideoThumbnail
-                            videoEl='.video-media__main'
-                            currentTime={Math.ceil(this.hoverTime)}
-                        />
-                        <div className='video-progress__time'>
-                            {this.transformHoverTime}
+                        <div className='video-progress__thumbnail-main'>
+                            <VideoThumbnail
+                                videoEl='.video-media__main'
+                                currentTime={Math.ceil(this.hoverTime)}
+                            />
+                            <div className='video-progress__time'>
+                                {this.transformHoverTime}
+                            </div>
                         </div>
                     </div>
                 </div>
