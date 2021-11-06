@@ -1,19 +1,25 @@
 import React, { Component, createRef } from 'react'
 import classNames from 'classnames'
+import PropTypes from 'prop-types'
 import './video-media.scss'
 import SvgIcon from '@/components/SvgIcon/SvgIcon'
 import VideoProgress from '@/components/VideoProgress/VideoProgress'
 import VideoVolume from '@/components/VideoVolume/VideoVolume'
+import VideoAutoNext from '@/components/VideoAutoNext/VideoAutoNext'
+import VideoNext from '@/components/VideoNext/VideoNext'
 import VideoSetting from '@/components/VideoSetting/VideoSetting'
 
 class VideoMedia extends Component {
-    constructor () {
-        // TODO cookie 影片時間
+    constructor (props) {
+        // TODO cookie 影片時間、volume、playback rate
         super()
         this.videoEl = createRef()
+        this.props = props
         this.state = {
             showSetting: false,
             showControl: false,
+            autoNext: true,
+            isPlayNext: true,
             // video status
             videoStatus: 0,
             videoCurrentTime: 0,
@@ -24,6 +30,7 @@ class VideoMedia extends Component {
             videoEnded: false,
         }
         this.perTimeSeek = 5
+        this.controlTimer = null
 
         // load
         this.handleOnload = this.handleOnload.bind(this)
@@ -46,10 +53,20 @@ class VideoMedia extends Component {
         this.handleSetProgress = this.handleSetProgress.bind(this)
         this.handleChangeSettingStatus = this.handleChangeSettingStatus.bind(this)
         this.handleKeydown = this.handleKeydown.bind(this)
+        this.handleOnSwitchAuto = this.handleOnSwitchAuto.bind(this)
+        this.handleChangeIsPlayNext = this.handleChangeIsPlayNext.bind(this)
     }
 
     componentDidMount () {
         window.addEventListener('keydown', this.handleKeydown)
+    }
+
+    componentDidUpdate (prevProps, prevState) {
+        const { source } = this.props
+
+        if (prevProps.source !== source) {
+            this.videoEl.current.load()
+        }
     }
 
     componentWillUnmount () {
@@ -58,6 +75,7 @@ class VideoMedia extends Component {
 
     handleOnload () {
         const { duration } = this.videoEl.current
+
         this.setState({
             videoDuration: duration,
         })
@@ -185,6 +203,18 @@ class VideoMedia extends Component {
         this.changeControlStatus(true, true)
     }
 
+    handleOnSwitchAuto (e) {
+        this.setState({
+            autoNext: e,
+        })
+    }
+
+    handleChangeIsPlayNext (status) {
+        this.setState({
+            isPlayNext: status,
+        })
+    }
+
     changeControlStatus (status, autoClose = false) {
         status = status === undefined ? !this.state.showControl : status
         window.clearTimeout(this.controlTimer)
@@ -197,7 +227,13 @@ class VideoMedia extends Component {
     }
 
     get isShowControl () {
-        return !this.state.videoStatus || this.state.showControl
+        const { videoStatus, showControl } = this.state
+        return !videoStatus || showControl
+    }
+
+    get isInfoNext () {
+        const { videoEnded, autoNext, isPlayNext } = this.state
+        return videoEnded && autoNext && isPlayNext
     }
 
     get transformTime () {
@@ -225,21 +261,21 @@ class VideoMedia extends Component {
     render () {
         return (
             <div className='video-media'>
-                <video
-                    className='video-media__main'
-                    ref={this.videoEl}
-                    onLoadedMetadata={this.handleOnload}
-                    onPlay={this.handleVideoStatus}
-                    onPause={this.handleVideoStatus}
-                    onVolumeChange={this.handleVolumeStatus}
-                    onRateChange={this.handlePlaybackRateStatus}
-                    onTimeUpdate={this.handleOnTracked}
-                    onSeeking={this.handleOnTracked}
-                    onProgress={this.handleOnProgress}
-                >
-                    <source src={new URL('../../assets/video/video1.mp4', import.meta.url).href} type='video/mp4' />
-                    {/* <source src='http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' /> */}
-                </video>
+                <div className='video-media__main'>
+                    <video
+                        ref={this.videoEl}
+                        onLoadedMetadata={this.handleOnload}
+                        onPlay={this.handleVideoStatus}
+                        onPause={this.handleVideoStatus}
+                        onVolumeChange={this.handleVolumeStatus}
+                        onRateChange={this.handlePlaybackRateStatus}
+                        onTimeUpdate={this.handleOnTracked}
+                        onSeeking={this.handleOnTracked}
+                        onProgress={this.handleOnProgress}
+                    >
+                        <source src={this.props.source} type='video/mp4' />
+                    </video>
+                </div>
                 <div className={classNames('video-media__controls', {
                     '-active': this.isShowControl,
                 })}
@@ -248,6 +284,15 @@ class VideoMedia extends Component {
                         className='video-media__controls-mask'
                         onClick={this.handleToggleStatus}
                     />
+                    <div
+                        className={classNames('video-media__controls-info', {
+                            '-active': this.isInfoNext,
+                        })}
+                    >
+                        {this.isInfoNext
+                            ? <VideoNext onChangeIsPlayNext={this.handleChangeIsPlayNext} onNext={this.props.onChangeNextVideo} />
+                            : null}
+                    </div>
                     <div className='video-media__controls-main'>
                         <VideoProgress
                             status={this.state.videoStatus}
@@ -272,6 +317,9 @@ class VideoMedia extends Component {
                                 >
                                     <SvgIcon name={this.state.videoEnded ? 'replay' : this.state.videoStatus ? 'pause' : 'play'} />
                                 </div>
+                                <div className='video-media__controls-item' onClick={this.props.onChangeNextVideo}>
+                                    <SvgIcon name='skip' />
+                                </div>
                                 <div className='video-media__time'>
                                     {this.transformTime} / {this.transformTotalTime}
                                 </div>
@@ -281,6 +329,10 @@ class VideoMedia extends Component {
                                 />
                             </div>
                             <div className='video-media__controls-items'>
+                                <VideoAutoNext
+                                    initAuto={this.state.autoNext}
+                                    onSwitchAuto={this.handleOnSwitchAuto}
+                                />
                                 <VideoSetting
                                     transformPlaybackRate={this.transformPlaybackRate}
                                     initPlaybackRate={this.state.videoPlaybackRate}
@@ -300,6 +352,11 @@ class VideoMedia extends Component {
             </div>
         )
     }
+}
+
+VideoMedia.propTypes = {
+    source: PropTypes.string,
+    onChangeNextVideo: PropTypes.func,
 }
 
 export default VideoMedia

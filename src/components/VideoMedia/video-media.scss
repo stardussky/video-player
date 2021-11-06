@@ -4,12 +4,24 @@
     position: relative;
     display: flex;
     align-items: center;
+    color: map-get($colors, white);
+    user-select: none;
 
     &__main {
-        @include size(100%);
+        @include aspect(9 / 16);
 
-        max-width: 100%;
-        max-height: 100%;
+        position: relative;
+        width: 100%;
+
+        video {
+            @include size(100%);
+
+            position: absolute;
+            top: 0;
+            left: 0;
+            max-width: 100%;
+            max-height: 100%;
+        }
     }
 
     &__controls {
@@ -45,6 +57,30 @@
             justify-content: flex-end;
             padding: $padding $padding * 2;
             flex-direction: column;
+        }
+
+        &-info {
+            @include size(100%);
+
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: map-get($colors, black);
+            opacity: 0;
+            pointer-events: none;
+
+            &.-active {
+                opacity: 1;
+                pointer-events: auto;
+                transition: opacity .3s;
+            }
+
+            > * {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
         }
 
         &-mask {
