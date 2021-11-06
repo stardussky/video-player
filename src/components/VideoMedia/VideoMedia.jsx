@@ -283,7 +283,7 @@ class VideoMedia extends Component {
                             <div className='video-media__controls-items'>
                                 <VideoSetting
                                     transformPlaybackRate={this.transformPlaybackRate}
-                                    playbackRate={this.state.videoPlaybackRate}
+                                    initPlaybackRate={this.state.videoPlaybackRate}
                                     onChangePlaybackRate={this.handleChangePlaybackRate}
                                     onChangeSettingStatus={this.handleChangeSettingStatus}
                                 />

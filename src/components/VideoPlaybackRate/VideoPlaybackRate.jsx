@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import classNames from 'classnames'
 import './video-playback-rate.scss'
 
-const VideoPlaybackRate = ({ onBack, transformPlaybackRate, playbackRate, onChangePlaybackRate }) => {
+const VideoPlaybackRate = ({ onBack, transformPlaybackRate, initPlaybackRate, onChangePlaybackRate }) => {
     const rate = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
     return (
         <ul className='video-playback-rate'>
@@ -30,7 +30,7 @@ const VideoPlaybackRate = ({ onBack, transformPlaybackRate, playbackRate, onChan
                 <div
                     className='video-playback-rate__range video-setting__item-option'
                     style={{
-                        '--progress': `${(playbackRate - 0.125) / 2 * 100}%`,
+                        '--progress': `${(initPlaybackRate - 0.125) / 2 * 100}%`,
                     }}
                 >
                     <input
@@ -38,7 +38,7 @@ const VideoPlaybackRate = ({ onBack, transformPlaybackRate, playbackRate, onChan
                         min='0.25'
                         max='2'
                         step='0.01'
-                        value={playbackRate}
+                        value={initPlaybackRate}
                         onChange={(e) => onChangePlaybackRate(Number(e.target.value))}
                     />
                 </div>
@@ -50,7 +50,7 @@ const VideoPlaybackRate = ({ onBack, transformPlaybackRate, playbackRate, onChan
 VideoPlaybackRate.propTypes = {
     onBack: PropTypes.func,
     transformPlaybackRate: PropTypes.string,
-    playbackRate: PropTypes.number,
+    initPlaybackRate: PropTypes.number,
     onChangePlaybackRate: PropTypes.func,
 }
 
