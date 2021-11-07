@@ -105,7 +105,7 @@ class VideoProgress extends Component {
     }
 
     get currentProgress () {
-        return this.props.currentTime / this.props.duration
+        return (this.props.currentTime / this.props.duration) || 0
     }
 
     get hoverTime () {
