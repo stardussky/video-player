@@ -266,7 +266,6 @@ class VideoMedia extends Component {
     }
 
     loadedPreset () {
-        // TODO thumbnail重置
         this.loadSessionStorage()
         this.handleChangeIsPlayNext(true)
         if (this.state.isFirstEnter) {
@@ -385,6 +384,7 @@ class VideoMedia extends Component {
                     </div>
                     <div className='video-media__controls-main'>
                         <VideoProgress
+                            key={this.props.source.name}
                             status={this.state.videoStatus}
                             currentTime={this.state.videoCurrentTime}
                             duration={this.state.videoDuration}
