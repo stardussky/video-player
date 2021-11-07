@@ -19,8 +19,8 @@ class VideoProgress extends Component {
 
         this.handleHover = this.handleHover.bind(this)
         this.handleBlur = this.handleBlur.bind(this)
-        this.handleTouchStart = this.handleTouchStart.bind(this)
-        this.handleTouchEnd = this.handleTouchEnd.bind(this)
+        this.handleTouchstart = this.handleTouchstart.bind(this)
+        this.handleTouchend = this.handleTouchend.bind(this)
         this.handleStartDrag = this.handleStartDrag.bind(this)
         this.handleMove = this.handleMove.bind(this)
         this.handleMouseup = this.handleMouseup.bind(this)
@@ -54,18 +54,19 @@ class VideoProgress extends Component {
         }
     }
 
-    handleTouchStart (e) {
+    handleTouchstart (e) {
         this.setState({
             canDrag: true,
             isHover: true,
         }, () => {
+            this.handleStartDrag()
             this.handleMove(e)
         })
         window.addEventListener('touchmove', this.handleMove)
-        window.addEventListener('touchend', this.handleTouchEnd)
+        window.addEventListener('touchend', this.handleTouchend)
     }
 
-    handleTouchEnd (e) {
+    handleTouchend (e) {
         e.preventDefault()
         const { ended, onPlay } = this.props
         this.setState({
@@ -78,7 +79,7 @@ class VideoProgress extends Component {
             }
         }
         window.removeEventListener('touchmove', this.handleMove)
-        window.removeEventListener('touchend', this.handleTouchEnd)
+        window.removeEventListener('touchend', this.handleTouchend)
     }
 
     handleStartDrag (e) {
@@ -161,7 +162,7 @@ class VideoProgress extends Component {
                     '--buffered-progress': this.props.buffered,
                 }}
                 onMouseEnter={this.handleHover}
-                onTouchStart={this.handleTouchStart}
+                onTouchStart={this.handleTouchstart}
                 onMouseDown={this.handleStartDrag}
                 onMouseLeave={this.handleBlur}
             >
