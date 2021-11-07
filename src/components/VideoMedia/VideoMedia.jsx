@@ -12,7 +12,13 @@ import transformTime from '@/functions/transformTime'
 
 class VideoMedia extends Component {
     constructor (props) {
-        // TODO cookie 影片時間、volume、playback rate
+        // TODO play pause currentTime 特效
+        // TODO double click 手勢
+        // TODO button hover title
+        // TODO Icon 效果
+        // TODO 子母畫面
+        // TODO touch事件
+        // TODO 彈幕
         super()
         this.videoEl = createRef()
         this.props = props
@@ -26,8 +32,8 @@ class VideoMedia extends Component {
             videoCurrentTime: 0,
             videoDuration: 0,
             videoBuffered: 0,
-            videoVolume: '0.5',
-            videoPlaybackRate: 1,
+            videoVolume: window.sessionStorage.getItem('volume') || '1',
+            videoPlaybackRate: Number(window.sessionStorage.getItem('playbackRate')) || 1,
             videoEnded: false,
         }
         this.perTimeSeek = 5
@@ -83,9 +89,13 @@ class VideoMedia extends Component {
         this.loadedPreset()
     }
 
+    handleChangeCurrentTime (e) {
+        this.videoEl.current.currentTime = e
+    }
+
     handlePlay () {
         const { videoEnded } = this.state
-        if (videoEnded) this.videoEl.current.currentTime = 0
+        if (videoEnded) this.handleChangeCurrentTime(0)
 
         this.videoEl.current.play()
     }
@@ -121,10 +131,12 @@ class VideoMedia extends Component {
         this.setState({
             videoVolume: String(volume),
         })
+        window.sessionStorage.setItem('volume', volume)
     }
 
     handleChangePlaybackRate (e) {
         this.videoEl.current.playbackRate = e
+        window.sessionStorage.setItem('playbackRate', e)
     }
 
     handlePlaybackRateStatus () {
@@ -133,6 +145,7 @@ class VideoMedia extends Component {
         this.setState({
             videoPlaybackRate: playbackRate,
         })
+        // window.sessionStorage.setItem('playbackRate', playbackRate)
     }
 
     handleToggleFullscreen () {
@@ -150,6 +163,7 @@ class VideoMedia extends Component {
             videoCurrentTime: currentTime,
             videoEnded: currentTime === duration,
         })
+        window.sessionStorage.setItem('currentTime', currentTime)
     }
 
     handleOnProgress () {
@@ -173,7 +187,7 @@ class VideoMedia extends Component {
     handleSetProgress (progress) {
         const { videoDuration } = this.state
 
-        this.videoEl.current.currentTime = videoDuration * progress
+        this.handleChangeCurrentTime(videoDuration * progress)
     }
 
     handleChangeSettingStatus (status) {
@@ -191,16 +205,16 @@ class VideoMedia extends Component {
 
     handleKeydown (e) {
         const { code } = e
+        const { videoCurrentTime, videoDuration } = this.state
         if (code === 'Space') {
             this.handleToggleStatus()
         }
         if (code === 'ArrowRight') {
-            const { videoCurrentTime, videoDuration } = this.state
             const time = Math.min(videoCurrentTime + this.perTimeSeek, videoDuration)
-            this.videoEl.current.currentTime = time
+            this.handleChangeCurrentTime(time)
         }
         if (code === 'ArrowLeft') {
-            this.videoEl.current.currentTime -= this.perTimeSeek
+            this.handleChangeCurrentTime(videoCurrentTime - this.perTimeSeek)
         }
         this.changeControlStatus(true, true)
     }
@@ -229,7 +243,16 @@ class VideoMedia extends Component {
     }
 
     loadedPreset () {
+        // TODO 須自動開始播放
+        // TODO thumbnail重置
+        this.loadSessionStorage()
         this.handleChangeIsPlayNext(true)
+    }
+
+    loadSessionStorage () {
+        this.handleChangeCurrentTime(window.sessionStorage.getItem('currentTime'))
+        this.handleChangeVolume(window.sessionStorage.getItem('volume'))
+        this.handleChangePlaybackRate(window.sessionStorage.getItem('playbackRate'))
     }
 
     get isShowControl () {
