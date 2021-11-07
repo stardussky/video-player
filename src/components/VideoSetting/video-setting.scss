@@ -8,9 +8,6 @@
         transition: opacity .3s;
         transform: translate(0, -100%);
         pointer-events: none;
-        @include media-breakpoint-down(tablet) {
-            top: -$padding * 3;
-        }
 
         &.-open {
             opacity: 1;
@@ -61,7 +58,7 @@
             max-height: 250px;
         }
         @include media-breakpoint-down(tablet) {
-            max-height: 125px;
+            max-height: 115px;
         }
 
         &:first-child {

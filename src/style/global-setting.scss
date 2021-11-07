@@ -30,9 +30,16 @@ html,
 body {
     @include typo("body", 1);
 
+    overflow: hidden;
     min-width: 320px;
     overscroll-behavior: none;
     scroll-behavior: smooth;
+}
+
+#root {
+    overflow-y: auto;
+    min-height: 100vh;
+    -webkit-overflow-scrolling: touch;
 }
 
 input,

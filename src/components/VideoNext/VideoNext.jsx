@@ -35,7 +35,9 @@ const VideoNext = ({ nextSource, duration = 3, onChangeIsPlayNext, onNext }) => 
     return (
         <div className='video-next'>
             <div className='video-next__main'>
-                <p className='video-next__info'>下一個影片將在{countNumber}秒後播放</p>
+                <p className='video-next__info'>
+                    {countNumber > 0 ? `下一個影片將在${countNumber}秒後播放` : '即將開始播放'}
+                </p>
                 <div className='video-next__content'>
                     <div
                         className='video-next__image'
