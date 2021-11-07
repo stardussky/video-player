@@ -214,13 +214,16 @@ class VideoMedia extends Component {
         const { code } = e
         const { perTimeSeek, videoCurrentTime, videoDuration } = this.state
         if (code === 'Space') {
+            e.preventDefault()
             this.handleToggleStatus()
         }
         if (code === 'ArrowRight') {
+            e.preventDefault()
             const time = Math.min(videoCurrentTime + perTimeSeek, videoDuration)
             this.handleChangeCurrentTime(time)
         }
         if (code === 'ArrowLeft') {
+            e.preventDefault()
             this.handleChangeCurrentTime(videoCurrentTime - perTimeSeek)
         }
         this.changeControlStatus(true, true)
