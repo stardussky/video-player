@@ -21,6 +21,7 @@ class VideoMedia extends Component {
         this.videoEl = createRef()
         this.props = props
         this.state = {
+            isFirstEnter: false,
             userHasControl: false,
             showSetting: false,
             showControl: false,
@@ -59,6 +60,7 @@ class VideoMedia extends Component {
         this.handleOnProgress = this.handleOnProgress.bind(this)
         this.handleSetProgress = this.handleSetProgress.bind(this)
         this.handleChangeSettingStatus = this.handleChangeSettingStatus.bind(this)
+        this.changeUserControl = this.changeUserControl.bind(this)
         this.handleKeydown = this.handleKeydown.bind(this)
         this.handleOnSwitchAuto = this.handleOnSwitchAuto.bind(this)
         this.handleChangeIsPlayNext = this.handleChangeIsPlayNext.bind(this)
@@ -66,9 +68,9 @@ class VideoMedia extends Component {
 
     componentDidMount () {
         window.addEventListener('keydown', this.handleKeydown)
-        window.addEventListener('click', () => this.setState({ userHasControl: true }), { once: true })
-        window.addEventListener('touch', () => this.setState({ userHasControl: true }), { once: true })
-        window.addEventListener('keydown', () => this.setState({ userHasControl: true }), { once: true })
+        window.addEventListener('click', this.changeUserControl)
+        window.addEventListener('touchstart', this.changeUserControl)
+        window.addEventListener('keydown', this.changeUserControl)
     }
 
     componentDidUpdate (prevProps, prevState) {
@@ -81,12 +83,17 @@ class VideoMedia extends Component {
 
     componentWillUnmount () {
         window.removeEventListener('keydown', this.handleKeydown)
+        window.removeEventListener('click', this.changeUserControl)
+        window.removeEventListener('touchstart', this.changeUserControl)
+        window.removeEventListener('keydown', this.changeUserControl)
     }
 
     handleOnload () {
         const { duration } = this.videoEl.current
 
         this.setState({
+            userHasControl: false,
+            videoStatus: 0,
             videoDuration: duration,
         })
         this.loadedPreset()
@@ -224,7 +231,7 @@ class VideoMedia extends Component {
         this.setState({
             keyCode: null,
         })
-        requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
             this.setState({
                 keyCode: code,
             })
@@ -254,17 +261,26 @@ class VideoMedia extends Component {
         }, status ? 0 : 2000)
     }
 
+    changeUserControl () {
+        this.setState({ userHasControl: true })
+    }
+
     loadedPreset () {
-        // TODO 須自動開始播放
         // TODO thumbnail重置
         this.loadSessionStorage()
         this.handleChangeIsPlayNext(true)
+        if (this.state.isFirstEnter) {
+            this.handlePlay()
+        }
+        this.setState({
+            isFirstEnter: true,
+        })
     }
 
     loadSessionStorage () {
         this.handleChangeCurrentTime(window.sessionStorage.getItem('currentTime'))
         this.handleChangeVolume(window.sessionStorage.getItem('volume'))
-        this.handleChangePlaybackRate(window.sessionStorage.getItem('playbackRate'))
+        this.handleChangePlaybackRate(Number(window.sessionStorage.getItem('playbackRate')) || 1)
     }
 
     get isShowControl () {
