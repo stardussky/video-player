@@ -14,8 +14,8 @@ class VideoMedia extends Component {
     constructor (props) {
         // TODO Icon 效果
         // TODO 子母畫面
-        // TODO touch事件
         // TODO 彈幕
+        // TODO fix手機全螢幕
         super()
         this.videoEl = createRef()
         this.props = props
@@ -27,7 +27,7 @@ class VideoMedia extends Component {
             autoNext: true,
             isPlayNext: true,
             perTimeSeek: 5,
-            keyCode: null,
+            tipStatus: null,
             // video status
             videoStatus: 0,
             videoCurrentTime: 0,
@@ -40,6 +40,8 @@ class VideoMedia extends Component {
         this.controlTimer = null
         this.tipTimer = null
         this.tipDuration = 1
+        this.tapTimer = null
+        this.isTapOnce = false
 
         // load
         this.handleOnload = this.handleOnload.bind(this)
@@ -64,6 +66,7 @@ class VideoMedia extends Component {
         this.switchIconsTip = this.switchIconsTip.bind(this)
         this.handleKeydown = this.handleKeydown.bind(this)
         this.handleTouchstart = this.handleTouchstart.bind(this)
+        this.handleDoubleTap = this.handleDoubleTap.bind(this)
         this.handleOnSwitchAuto = this.handleOnSwitchAuto.bind(this)
         this.handleChangeIsPlayNext = this.handleChangeIsPlayNext.bind(this)
     }
@@ -214,35 +217,48 @@ class VideoMedia extends Component {
 
     handleKeydown (e) {
         const { code } = e
-        const { perTimeSeek, videoCurrentTime, videoDuration } = this.state
         if (code === 'Space') {
             e.preventDefault()
             this.handleToggleStatus()
         }
         if (code === 'ArrowRight') {
             e.preventDefault()
-            const time = Math.min(videoCurrentTime + perTimeSeek, videoDuration)
-            this.handleChangeCurrentTime(time)
+            this.fastForward()
         }
         if (code === 'ArrowLeft') {
             e.preventDefault()
-            this.handleChangeCurrentTime(videoCurrentTime - perTimeSeek)
+            this.fastBackward()
         }
         this.changeControlStatus(true, true)
         this.switchIconsTip()
-        this.setState({
-            keyCode: null,
-        })
-        setTimeout(() => {
-            this.setState({
-                keyCode: code,
-            })
-        }, 50)
     }
 
     handleTouchstart (e) {
         this.changeControlStatus(true, true)
-        this.handleToggleStatus()
+        if (this.isShowControl) {
+            this.handleToggleStatus()
+        }
+    }
+
+    handleDoubleTap (position) {
+        if (!this.isTapOnce) {
+            this.isTapOnce = true
+            this.tapTimer = window.setTimeout(() => {
+                this.handleTouchstart()
+            }, 300)
+            window.setTimeout(() => {
+                this.isTapOnce = false
+            }, 300)
+            return
+        }
+        window.clearTimeout(this.tapTimer)
+        if (position === 'left') {
+            this.fastBackward()
+        }
+        if (position === 'right') {
+            this.fastForward()
+        }
+        this.switchIconsTip()
     }
 
     handleOnSwitchAuto (e) {
@@ -257,6 +273,33 @@ class VideoMedia extends Component {
         })
     }
 
+    fastForward () {
+        const { perTimeSeek, videoCurrentTime, videoDuration } = this.state
+        const time = Math.min(videoCurrentTime + perTimeSeek, videoDuration)
+        this.handleChangeCurrentTime(time)
+        this.setState({
+            tipStatus: null,
+        })
+        setTimeout(() => {
+            this.setState({
+                tipStatus: 'forward',
+            })
+        }, 50)
+    }
+
+    fastBackward () {
+        const { perTimeSeek, videoCurrentTime } = this.state
+        this.handleChangeCurrentTime(videoCurrentTime - perTimeSeek)
+        this.setState({
+            tipStatus: null,
+        })
+        setTimeout(() => {
+            this.setState({
+                tipStatus: 'backward',
+            })
+        }, 50)
+    }
+
     changeControlStatus (status, autoClose = false) {
         status = status === undefined ? !this.state.showControl : status
         window.clearTimeout(this.controlTimer)
@@ -265,7 +308,7 @@ class VideoMedia extends Component {
                 showControl: status,
             })
             if (status && autoClose) this.changeControlStatus(false)
-        }, status ? 0 : 2000)
+        }, status ? 0 : 3000)
     }
 
     switchIconsTip (status = true) {
@@ -359,14 +402,12 @@ class VideoMedia extends Component {
                             '-active': this.state.showIconsTip,
                             '-play': this.state.videoStatus,
                             '-pause': !this.state.videoStatus,
-                            '-quick': this.state.keyCode === 'ArrowRight',
-                            '-rewind': this.state.keyCode === 'ArrowLeft',
+                            '-forward': this.state.tipStatus === 'forward',
+                            '-backward': this.state.tipStatus === 'backward',
                         })}
                         style={{ '--tip-duration': this.tipDuration }}
                         onClick={this.handleToggleStatus}
                         onDoubleClick={this.handleToggleFullscreen}
-                        onTouchStart={this.handleTouchstart}
-                        onTouchEnd={(e) => e.preventDefault()}
                     >
                         <div className='video-media__controls-mask-icon -play'>
                             <span>
@@ -378,16 +419,26 @@ class VideoMedia extends Component {
                                 <SvgIcon name='pause' />
                             </span>
                         </div>
-                        <div className='video-media__controls-mask-icon -quick'>
+                        <div className='video-media__controls-mask-icon -forward'>
                             <span>
                                 {this.state.perTimeSeek}秒
                             </span>
                         </div>
-                        <div className='video-media__controls-mask-icon -rewind'>
+                        <div className='video-media__controls-mask-icon -backward'>
                             <span>
                                 {this.state.perTimeSeek}秒
                             </span>
                         </div>
+                        <div
+                            className='video-media__controls-tap-area -left'
+                            onTouchStart={() => this.handleDoubleTap('left')}
+                            onTouchEnd={(e) => e.preventDefault()}
+                        />
+                        <div
+                            className='video-media__controls-tap-area -right'
+                            onTouchStart={() => this.handleDoubleTap('right')}
+                            onTouchEnd={(e) => e.preventDefault()}
+                        />
                     </div>
                     <div
                         className={classNames('video-media__controls-info', {
