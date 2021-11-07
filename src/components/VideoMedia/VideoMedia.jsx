@@ -63,6 +63,7 @@ class VideoMedia extends Component {
         this.handleChangeSettingStatus = this.handleChangeSettingStatus.bind(this)
         this.switchIconsTip = this.switchIconsTip.bind(this)
         this.handleKeydown = this.handleKeydown.bind(this)
+        this.handleTouchstart = this.handleTouchstart.bind(this)
         this.handleOnSwitchAuto = this.handleOnSwitchAuto.bind(this)
         this.handleChangeIsPlayNext = this.handleChangeIsPlayNext.bind(this)
     }
@@ -195,6 +196,7 @@ class VideoMedia extends Component {
         const { videoDuration } = this.state
 
         this.handleChangeCurrentTime(videoDuration * progress)
+        this.changeControlStatus(true, true)
     }
 
     handleChangeSettingStatus (status) {
@@ -236,6 +238,11 @@ class VideoMedia extends Component {
                 keyCode: code,
             })
         }, 50)
+    }
+
+    handleTouchstart (e) {
+        this.changeControlStatus(true, true)
+        this.handleToggleStatus()
     }
 
     handleOnSwitchAuto (e) {
@@ -358,6 +365,8 @@ class VideoMedia extends Component {
                         style={{ '--tip-duration': this.tipDuration }}
                         onClick={this.handleToggleStatus}
                         onDoubleClick={this.handleToggleFullscreen}
+                        onTouchStart={this.handleTouchstart}
+                        onTouchEnd={(e) => e.preventDefault()}
                     >
                         <div className='video-media__controls-mask-icon -play'>
                             <span>

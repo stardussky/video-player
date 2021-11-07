@@ -58,7 +58,7 @@
             padding: $padding $padding * 2;
             flex-direction: column;
             @include media-breakpoint-down(tablet) {
-                padding: $padding / 2 $padding;
+                padding: $padding;
             }
         }
 
@@ -108,6 +108,10 @@
 
                 position: absolute;
                 opacity: 0;
+                pointer-events: none;
+                @include media-breakpoint-down(tablet) {
+                    @include size(60px);
+                }
 
                 > span {
                     @include size(100%);
@@ -211,6 +215,7 @@
                 transform: translate(-50%, -100%);
                 opacity: 0;
                 transition: opacity .3s;
+                pointer-events: none;
             }
         }
     }
