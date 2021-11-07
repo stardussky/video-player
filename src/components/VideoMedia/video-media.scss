@@ -71,6 +71,9 @@
             background-color: map-get($colors, black);
             opacity: 0;
             pointer-events: none;
+            @include media-breakpoint-down(desktop) {
+                z-index: 1;
+            }
 
             &.-active {
                 opacity: 1;

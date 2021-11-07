@@ -24,7 +24,19 @@ $font-family: (
             font-size: 36px;
             font-weight: map-get($font-weight, normal);
             line-height: normal;
-            letter-spacing: 9px;
+            letter-spacing: 2px;
+            @include media-breakpoint-down(desktop) {
+                font-size: 24px;
+            }
+        }
+        @else if ($type == 2) {
+            font-size: 16px;
+            font-weight: map-get($font-weight, normal);
+            line-height: normal;
+            letter-spacing: 2px;
+            @include media-breakpoint-down(desktop) {
+                font-size: 14px;
+            }
         }
         @else {
             @error '#{$type}：沒有這個type';

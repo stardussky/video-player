@@ -36,12 +36,14 @@ const VideoNext = ({ nextSource, duration = 3, onChangeIsPlayNext, onNext }) => 
         <div className='video-next'>
             <div className='video-next__main'>
                 <p className='video-next__info'>下一個影片將在{countNumber}秒後播放</p>
-                <div
-                    className='video-next__image'
-                    style={{ background: `#111 url(${nextSource.thumbnail}) no-repeat center / cover` }}
-                />
-                {/* <p className='video-next__title'>{nextSource.name}</p> */}
                 <div className='video-next__content'>
+                    <div
+                        className='video-next__image'
+                        style={{ background: `#111 url(${nextSource.thumbnail}) no-repeat center / cover` }}
+                    />
+                    <p className='video-next__title'>{nextSource.name}</p>
+                </div>
+                <div className='video-next__buttons'>
                     <button className='video-next__button' onClick={cancelCount}>取消</button>
                     <button className='video-next__button' onClick={onNext}>立即播放</button>
                 </div>

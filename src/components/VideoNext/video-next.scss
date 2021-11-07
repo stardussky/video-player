@@ -1,12 +1,28 @@
 .video-next {
+    @include size(100%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $padding;
+
     &__image {
         @include aspect(9 / 16);
 
-        width: 400px;
         margin-bottom: $padding;
+        width: 400px;
+        @include media-breakpoint-down(desktop) {
+            width: 300px;
+        }
+        @include media-breakpoint-down(tablet) {
+            width: 100px;
+        }
     }
 
     &__info {
+        @include typo('heading', 2);
+
+        white-space: nowrap;
         color: map-get($colors, white);
         margin-bottom: $padding;
     }
@@ -18,6 +34,18 @@
     }
 
     &__content {
+        @include media-breakpoint-down(tablet) {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            > * {
+                flex: 0 0 calc(50% - #{$padding / 2});
+            }
+        }
+    }
+
+    &__buttons {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -28,10 +56,18 @@
     }
 
     &__button {
+        @include typo('heading', 2);
+
         padding: $padding * 2;
         color: map-get($colors, white);
         background-color: map-get($colors, deep);
         cursor: pointer;
+        @include media-breakpoint-down(desktop) {
+            padding: $padding;
+        }
+        @include media-breakpoint-down(tablet) {
+            padding: $padding / 2 $padding;
+        }
 
         &:last-of-type {
             background-color: map-get($colors, dark);
