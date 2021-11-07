@@ -2,9 +2,6 @@
     position: relative;
     padding: $padding * 2 0;
     cursor: pointer;
-    @include media-breakpoint-down(tablet) {
-        padding: $padding 0;
-    }
 
     @media (hover: hover) and (pointer: fine) {
         &:hover {

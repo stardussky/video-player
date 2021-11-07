@@ -19,9 +19,11 @@ class VideoProgress extends Component {
 
         this.handleHover = this.handleHover.bind(this)
         this.handleBlur = this.handleBlur.bind(this)
+        this.handleTouchStart = this.handleTouchStart.bind(this)
+        this.handleTouchEnd = this.handleTouchEnd.bind(this)
         this.handleStartDrag = this.handleStartDrag.bind(this)
         this.handleMove = this.handleMove.bind(this)
-        this.handleReset = this.handleReset.bind(this)
+        this.handleMouseup = this.handleMouseup.bind(this)
         this.handleResize = this.handleResize.bind(this)
     }
 
@@ -39,7 +41,7 @@ class VideoProgress extends Component {
             isHover: true,
         })
         window.addEventListener('mousemove', this.handleMove)
-        window.addEventListener('mouseup', this.handleReset)
+        window.addEventListener('mouseup', this.handleMouseup)
     }
 
     handleBlur () {
@@ -48,11 +50,38 @@ class VideoProgress extends Component {
         })
         if (!this.state.canDrag) {
             window.removeEventListener('mousemove', this.handleMove)
-            window.removeEventListener('mouseup', this.handleReset)
+            window.removeEventListener('mouseup', this.handleMouseup)
         }
     }
 
-    handleStartDrag () {
+    handleTouchStart (e) {
+        this.setState({
+            canDrag: true,
+            isHover: true,
+        }, () => {
+            this.handleMove(e)
+        })
+        window.addEventListener('touchmove', this.handleMove)
+        window.addEventListener('touchend', this.handleTouchEnd)
+    }
+
+    handleTouchEnd (e) {
+        e.preventDefault()
+        const { ended, onPlay } = this.props
+        this.setState({
+            isHover: false,
+            canDrag: false,
+        })
+        if (this.beforeStatus) {
+            if (!ended) {
+                onPlay()
+            }
+        }
+        window.removeEventListener('touchmove', this.handleMove)
+        window.removeEventListener('touchend', this.handleTouchEnd)
+    }
+
+    handleStartDrag (e) {
         this.setState({
             canDrag: true,
         })
@@ -63,24 +92,28 @@ class VideoProgress extends Component {
     }
 
     handleMove (e) {
-        const { clientX } = e
+        let clientX
+        if (~e.type.indexOf('touch')) {
+            ([{ clientX }] = e.touches)
+        } else {
+            ({ clientX } = e)
+        }
         const { left } = this.progressEl.current.getBoundingClientRect()
         const { clientWidth } = this.progressEl.current
 
         const x = clientX - left
         const clampX = Math.max(Math.min(x, clientWidth), 0)
         const progress = clampX / clientWidth
-
         this.setState({
             hoverProgress: progress,
+        }, () => {
+            if (this.state.canDrag) {
+                this.props.onSetProgress(this.state.hoverProgress)
+            }
         })
-
-        if (this.state.canDrag) {
-            this.props.onSetProgress(this.state.hoverProgress)
-        }
     }
 
-    handleReset () {
+    handleMouseup () {
         const { ended, onPlay } = this.props
         this.setState({
             canDrag: false,
@@ -92,7 +125,7 @@ class VideoProgress extends Component {
         }
         if (!this.state.isHover) {
             window.removeEventListener('mousemove', this.handleMove)
-            window.removeEventListener('mouseup', this.handleReset)
+            window.removeEventListener('mouseup', this.handleMouseup)
         }
     }
 
@@ -128,6 +161,7 @@ class VideoProgress extends Component {
                     '--buffered-progress': this.props.buffered,
                 }}
                 onMouseEnter={this.handleHover}
+                onTouchStart={this.handleTouchStart}
                 onMouseDown={this.handleStartDrag}
                 onMouseLeave={this.handleBlur}
             >
