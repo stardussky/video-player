@@ -16,7 +16,8 @@ const VideoAutoNext = ({ initAuto = true, onSwitchAuto }) => {
     }
 
     return (
-        <div
+        <button
+            title={isAuto ? '已啟用自動播放功能' : '已停用自動播放功能'}
             className={classNames('video-media__controls-item video-auto-next', {
                 '-active': isAuto,
             })}
@@ -27,7 +28,7 @@ const VideoAutoNext = ({ initAuto = true, onSwitchAuto }) => {
                     <SvgIcon name={isAuto ? 'play' : 'pause'} />
                 </div>
             </div>
-        </div>
+        </button>
     )
 }
 

@@ -1,7 +1,7 @@
 .video-setting {
     &__main {
         position: absolute;
-        top: -$padding * 5;
+        top: -$padding * 4;
         right: 0;
         color: map-get($colors, white);
         opacity: 0;

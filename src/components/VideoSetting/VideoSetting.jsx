@@ -53,12 +53,13 @@ const VideoSetting = ({ transformPlaybackRate, initPlaybackRate, onChangePlaybac
             className='video-setting'
             ref={videoSettingEl}
         >
-            <div
+            <button
+                title='設定'
                 className='video-media__controls-item video-setting__display'
                 onClick={() => setIsOpen(!isOpen)}
             >
                 <SvgIcon name='setting' />
-            </div>
+            </button>
             <div
                 className={classNames('video-setting__main', {
                     '-open': isOpen,

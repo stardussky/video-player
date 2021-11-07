@@ -12,7 +12,6 @@ import transformTime from '@/functions/transformTime'
 
 class VideoMedia extends Component {
     constructor (props) {
-        // TODO button hover title
         // TODO Icon 效果
         // TODO 子母畫面
         // TODO touch事件
@@ -382,7 +381,11 @@ class VideoMedia extends Component {
                             ? <VideoNext nextSource={this.props.nextSource} onChangeIsPlayNext={this.handleChangeIsPlayNext} onNext={this.props.onChangeNextVideo} />
                             : null}
                     </div>
-                    <div className='video-media__controls-main'>
+                    <div
+                        className={classNames('video-media__controls-main', {
+                            '-setting': this.state.showSetting,
+                        })}
+                    >
                         <VideoProgress
                             key={this.props.source.name}
                             status={this.state.videoStatus}
@@ -394,22 +397,23 @@ class VideoMedia extends Component {
                             onPlay={this.handlePlay}
                             onSetProgress={this.handleSetProgress}
                         />
-                        <span
-                            className={classNames('video-media__setting-mask', {
-                                '-active': this.state.showSetting,
-                            })}
-                        />
+                        <span className='video-media__setting-mask' />
                         <div className='video-media__controls-list'>
                             <div className='video-media__controls-items'>
-                                <div
+                                <button
+                                    title={this.state.videoEnded ? '重播' : this.state.videoStatus ? '暫停' : '播放'}
                                     className='video-media__controls-item video-media__controls-status'
                                     onClick={this.handleToggleStatus}
                                 >
                                     <SvgIcon name={this.state.videoEnded ? 'replay' : this.state.videoStatus ? 'pause' : 'play'} />
-                                </div>
-                                <div className='video-media__controls-item' onClick={this.props.onChangeNextVideo}>
+                                </button>
+                                <button
+                                    title='下一個'
+                                    className='video-media__controls-item'
+                                    onClick={this.props.onChangeNextVideo}
+                                >
                                     <SvgIcon name='skip' />
-                                </div>
+                                </button>
                                 <div className='video-media__time'>
                                     {this.transformTime} / {this.transformTotalTime}
                                 </div>
@@ -429,12 +433,13 @@ class VideoMedia extends Component {
                                     onChangePlaybackRate={this.handleChangePlaybackRate}
                                     onChangeSettingStatus={this.handleChangeSettingStatus}
                                 />
-                                <div
+                                <button
+                                    title='全螢幕'
                                     className='video-media__controls-item video-media__controls-fullscreen'
                                     onClick={this.handleToggleFullscreen}
                                 >
                                     <SvgIcon name='fullscreen' />
-                                </div>
+                                </button>
                             </div>
                         </div>
                     </div>

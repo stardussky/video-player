@@ -156,7 +156,6 @@
 
         &-items {
             display: flex;
-            align-items: center;
 
             .video-volume {
                 @include media-breakpoint-down(tablet) {
@@ -175,6 +174,7 @@
         }
 
         &-item {
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -182,6 +182,32 @@
             cursor: pointer;
             @include media-breakpoint-down(tablet) {
                 padding: $padding / 2;
+            }
+
+            .video-media__controls-main:not(.-setting) & {
+                @media (hover: hover) and (pointer: fine) {
+                    &:hover {
+                        &::before {
+                            opacity: 1;
+                        }
+                    }
+                }
+            }
+
+            &::before {
+                @include typo('list', 1);
+
+                content: attr(title);
+                position: absolute;
+                top: -$padding * 4;
+                left: 50%;
+                padding: $padding / 2 $padding;
+                white-space: nowrap;
+                color: map-get($colors, white);
+                background-color: map-get($colors, deep);
+                transform: translate(-50%, -100%);
+                opacity: 0;
+                transition: opacity .3s;
             }
         }
     }
@@ -194,7 +220,7 @@
         left: 0;
         pointer-events: none;
 
-        &.-active {
+        .video-media__controls-main.-setting & {
             pointer-events: auto;
         }
     }
@@ -202,6 +228,8 @@
     &__time {
         @include typo('list', 1);
 
+        display: flex;
+        align-items: center;
         color: map-get($colors, white);
     }
 }

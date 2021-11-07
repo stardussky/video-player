@@ -1,5 +1,6 @@
 .video-volume {
     display: flex;
+    align-items: center;
     cursor: pointer;
 
     @media (hover: hover) and (pointer: fine) {

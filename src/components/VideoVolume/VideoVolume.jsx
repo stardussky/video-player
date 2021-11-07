@@ -29,12 +29,17 @@ const VideoVolume = ({ initVolume = '0.5', onChangeVolume }) => {
 
     return (
         <div
-            className='video-media__controls-item video-volume'
+            className='video-volume'
             style={{
                 '--progress': `${volume * 100}%`,
             }}
         >
-            <SvgIcon name='volume' onClick={handleMute} />
+            <button
+                className='video-media__controls-item'
+                title={isMuted ? '解除靜音' : '靜音'}
+            >
+                <SvgIcon name='volume' onClick={handleMute} />
+            </button>
             <input
                 className='video-volume__range'
                 type='range'
