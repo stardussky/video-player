@@ -21,7 +21,7 @@ class VideoMedia extends Component {
         this.props = props
         this.state = {
             isFirstEnter: false,
-            userHasControl: false,
+            showIconsTip: false,
             showSetting: false,
             showControl: false,
             autoNext: true,
@@ -38,6 +38,8 @@ class VideoMedia extends Component {
             videoEnded: false,
         }
         this.controlTimer = null
+        this.tipTimer = null
+        this.tipDuration = 1
 
         // load
         this.handleOnload = this.handleOnload.bind(this)
@@ -59,7 +61,7 @@ class VideoMedia extends Component {
         this.handleOnProgress = this.handleOnProgress.bind(this)
         this.handleSetProgress = this.handleSetProgress.bind(this)
         this.handleChangeSettingStatus = this.handleChangeSettingStatus.bind(this)
-        this.changeUserControl = this.changeUserControl.bind(this)
+        this.switchIconsTip = this.switchIconsTip.bind(this)
         this.handleKeydown = this.handleKeydown.bind(this)
         this.handleOnSwitchAuto = this.handleOnSwitchAuto.bind(this)
         this.handleChangeIsPlayNext = this.handleChangeIsPlayNext.bind(this)
@@ -67,9 +69,6 @@ class VideoMedia extends Component {
 
     componentDidMount () {
         window.addEventListener('keydown', this.handleKeydown)
-        window.addEventListener('click', this.changeUserControl)
-        window.addEventListener('touchstart', this.changeUserControl)
-        window.addEventListener('keydown', this.changeUserControl)
     }
 
     componentDidUpdate (prevProps, prevState) {
@@ -82,16 +81,12 @@ class VideoMedia extends Component {
 
     componentWillUnmount () {
         window.removeEventListener('keydown', this.handleKeydown)
-        window.removeEventListener('click', this.changeUserControl)
-        window.removeEventListener('touchstart', this.changeUserControl)
-        window.removeEventListener('keydown', this.changeUserControl)
     }
 
     handleOnload () {
         const { duration } = this.videoEl.current
 
         this.setState({
-            userHasControl: false,
             videoStatus: 0,
             videoDuration: duration,
         })
@@ -102,25 +97,27 @@ class VideoMedia extends Component {
         this.videoEl.current.currentTime = e
     }
 
-    handlePlay () {
+    handlePlay (showTip = true) {
         const { videoEnded } = this.state
         if (videoEnded) this.handleChangeCurrentTime(0)
 
         this.videoEl.current.play()
+        this.switchIconsTip(showTip)
     }
 
-    handlePause () {
+    handlePause (showTip = true) {
         this.videoEl.current.pause()
+        this.switchIconsTip(showTip)
     }
 
-    handleToggleStatus () {
+    handleToggleStatus (showTip = true) {
         const { videoStatus } = this.state
 
         if (!videoStatus) {
-            this.handlePlay()
+            this.handlePlay(showTip)
             return
         }
-        this.handlePause()
+        this.handlePause(showTip)
     }
 
     handleVideoStatus () {
@@ -227,14 +224,15 @@ class VideoMedia extends Component {
             this.handleChangeCurrentTime(videoCurrentTime - perTimeSeek)
         }
         this.changeControlStatus(true, true)
+        this.switchIconsTip()
         this.setState({
             keyCode: null,
         })
-        window.requestAnimationFrame(() => {
+        setTimeout(() => {
             this.setState({
                 keyCode: code,
             })
-        })
+        }, 50)
     }
 
     handleOnSwitchAuto (e) {
@@ -260,15 +258,21 @@ class VideoMedia extends Component {
         }, status ? 0 : 2000)
     }
 
-    changeUserControl () {
-        this.setState({ userHasControl: true })
+    switchIconsTip (status = true) {
+        window.clearTimeout(this.tipTimer)
+        this.setState({ showIconsTip: status })
+        if (status) {
+            this.tipTimer = window.setTimeout(() => {
+                this.setState({ showIconsTip: false })
+            }, this.tipDuration * 1000)
+        }
     }
 
     loadedPreset () {
         this.loadSessionStorage()
         this.handleChangeIsPlayNext(true)
         if (this.state.isFirstEnter) {
-            this.handlePlay()
+            this.handlePlay(false)
         }
         this.setState({
             isFirstEnter: true,
@@ -342,12 +346,13 @@ class VideoMedia extends Component {
                 >
                     <div
                         className={classNames('video-media__controls-mask', {
-                            '-active': this.state.userHasControl,
+                            '-active': this.state.showIconsTip,
                             '-play': this.state.videoStatus,
                             '-pause': !this.state.videoStatus,
                             '-quick': this.state.keyCode === 'ArrowRight',
                             '-rewind': this.state.keyCode === 'ArrowLeft',
                         })}
+                        style={{ '--tip-duration': this.tipDuration }}
                         onClick={this.handleToggleStatus}
                         onDoubleClick={this.handleToggleFullscreen}
                     >

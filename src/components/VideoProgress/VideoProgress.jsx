@@ -75,7 +75,7 @@ class VideoProgress extends Component {
         })
         if (this.beforeStatus) {
             if (!ended) {
-                onPlay()
+                onPlay(false)
             }
         }
         window.removeEventListener('touchmove', this.handleMove)
@@ -88,7 +88,7 @@ class VideoProgress extends Component {
         })
 
         this.beforeStatus = this.props.status
-        this.props.onPause()
+        this.props.onPause(false)
         this.props.onSetProgress(this.state.hoverProgress)
     }
 
@@ -121,7 +121,7 @@ class VideoProgress extends Component {
         })
         if (this.beforeStatus) {
             if (!ended) {
-                onPlay()
+                onPlay(false)
             }
         }
         if (!this.state.isHover) {

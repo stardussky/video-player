@@ -144,7 +144,7 @@
                     opacity: 1;
 
                     > span {
-                        animation: scale-opacity 1s forwards;
+                        animation: scale-opacity calc(var(--tip-duration, 1s) * 1s) forwards;
                     }
                 }
             }
