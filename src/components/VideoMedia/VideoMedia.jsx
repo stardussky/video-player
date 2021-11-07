@@ -12,8 +12,6 @@ import transformTime from '@/functions/transformTime'
 
 class VideoMedia extends Component {
     constructor (props) {
-        // TODO play pause currentTime 特效
-        // TODO double click 手勢
         // TODO button hover title
         // TODO Icon 效果
         // TODO 子母畫面
@@ -23,10 +21,13 @@ class VideoMedia extends Component {
         this.videoEl = createRef()
         this.props = props
         this.state = {
+            userHasControl: false,
             showSetting: false,
             showControl: false,
             autoNext: true,
             isPlayNext: true,
+            perTimeSeek: 5,
+            keyCode: null,
             // video status
             videoStatus: 0,
             videoCurrentTime: 0,
@@ -36,7 +37,6 @@ class VideoMedia extends Component {
             videoPlaybackRate: Number(window.sessionStorage.getItem('playbackRate')) || 1,
             videoEnded: false,
         }
-        this.perTimeSeek = 5
         this.controlTimer = null
 
         // load
@@ -66,6 +66,9 @@ class VideoMedia extends Component {
 
     componentDidMount () {
         window.addEventListener('keydown', this.handleKeydown)
+        window.addEventListener('click', () => this.setState({ userHasControl: true }), { once: true })
+        window.addEventListener('touch', () => this.setState({ userHasControl: true }), { once: true })
+        window.addEventListener('keydown', () => this.setState({ userHasControl: true }), { once: true })
     }
 
     componentDidUpdate (prevProps, prevState) {
@@ -116,6 +119,7 @@ class VideoMedia extends Component {
 
     handleVideoStatus () {
         const { paused } = this.videoEl.current
+
         this.setState({
             videoStatus: !paused | 0,
         })
@@ -153,7 +157,7 @@ class VideoMedia extends Component {
             document.exitFullscreen()
             return
         }
-        this.videoEl.current.parentNode.requestFullscreen()
+        this.videoEl.current.parentNode.parentNode.requestFullscreen()
     }
 
     handleOnTracked () {
@@ -205,18 +209,26 @@ class VideoMedia extends Component {
 
     handleKeydown (e) {
         const { code } = e
-        const { videoCurrentTime, videoDuration } = this.state
+        const { perTimeSeek, videoCurrentTime, videoDuration } = this.state
         if (code === 'Space') {
             this.handleToggleStatus()
         }
         if (code === 'ArrowRight') {
-            const time = Math.min(videoCurrentTime + this.perTimeSeek, videoDuration)
+            const time = Math.min(videoCurrentTime + perTimeSeek, videoDuration)
             this.handleChangeCurrentTime(time)
         }
         if (code === 'ArrowLeft') {
-            this.handleChangeCurrentTime(videoCurrentTime - this.perTimeSeek)
+            this.handleChangeCurrentTime(videoCurrentTime - perTimeSeek)
         }
         this.changeControlStatus(true, true)
+        this.setState({
+            keyCode: null,
+        })
+        requestAnimationFrame(() => {
+            this.setState({
+                keyCode: code,
+            })
+        })
     }
 
     handleOnSwitchAuto (e) {
@@ -314,10 +326,38 @@ class VideoMedia extends Component {
                     '-active': this.isShowControl,
                 })}
                 >
-                    <span
-                        className='video-media__controls-mask'
+                    <div
+                        className={classNames('video-media__controls-mask', {
+                            '-active': this.state.userHasControl,
+                            '-play': this.state.videoStatus,
+                            '-pause': !this.state.videoStatus,
+                            '-quick': this.state.keyCode === 'ArrowRight',
+                            '-rewind': this.state.keyCode === 'ArrowLeft',
+                        })}
                         onClick={this.handleToggleStatus}
-                    />
+                        onDoubleClick={this.handleToggleFullscreen}
+                    >
+                        <div className='video-media__controls-mask-icon -play'>
+                            <span>
+                                <SvgIcon name='play' />
+                            </span>
+                        </div>
+                        <div className='video-media__controls-mask-icon -pause'>
+                            <span>
+                                <SvgIcon name='pause' />
+                            </span>
+                        </div>
+                        <div className='video-media__controls-mask-icon -quick'>
+                            <span>
+                                {this.state.perTimeSeek}秒
+                            </span>
+                        </div>
+                        <div className='video-media__controls-mask-icon -rewind'>
+                            <span>
+                                {this.state.perTimeSeek}秒
+                            </span>
+                        </div>
+                    </div>
                     <div
                         className={classNames('video-media__controls-info', {
                             '-active': this.isInfoNext,
