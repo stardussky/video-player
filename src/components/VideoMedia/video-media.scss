@@ -77,8 +77,8 @@
 
             &.-active {
                 opacity: 1;
-                pointer-events: auto;
                 transition: opacity .3s;
+                pointer-events: auto;
             }
 
             > * {
@@ -200,8 +200,14 @@
             justify-content: center;
             padding: $padding;
             cursor: pointer;
+            transition: opacity .3s;
             @include media-breakpoint-down(tablet) {
                 padding: $padding / 2;
+            }
+            @media (hover: hover) and (pointer: fine) {
+                &:hover {
+                    opacity: 0.8;
+                }
             }
 
             .video-media__controls-main:not(.-setting) & {
@@ -225,9 +231,9 @@
                 white-space: nowrap;
                 color: map-get($colors, white);
                 background-color: map-get($colors, deep);
-                transform: translate(-50%, -100%);
                 opacity: 0;
                 transition: opacity .3s;
+                transform: translate(-50%, -100%);
                 pointer-events: none;
             }
         }

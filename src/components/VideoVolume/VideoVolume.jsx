@@ -38,8 +38,9 @@ const VideoVolume = ({ initVolume = '0.5', onChangeVolume }) => {
             <button
                 className='video-media__controls-item'
                 title={isMuted ? '解除靜音' : '靜音'}
+                onClick={handleMute}
             >
-                <SvgIcon name={isMuted ? 'mute' : 'volume'} onClick={handleMute} />
+                <SvgIcon name={isMuted ? 'mute' : 'volume'} />
             </button>
             <input
                 className='video-volume__range'

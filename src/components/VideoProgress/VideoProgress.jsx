@@ -40,8 +40,10 @@ class VideoProgress extends Component {
         this.setState({
             isHover: true,
         })
-        window.addEventListener('mousemove', this.handleMove)
-        window.addEventListener('mouseup', this.handleMouseup)
+        if (!this.state.canDrag) {
+            window.addEventListener('mousemove', this.handleMove)
+            window.addEventListener('mouseup', this.handleMouseup)
+        }
     }
 
     handleBlur () {

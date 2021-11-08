@@ -12,7 +12,6 @@ import transformTime from '@/functions/transformTime'
 
 class VideoMedia extends Component {
     constructor (props) {
-        // TODO Icon 效果
         // TODO 彈幕
         super()
         this.videoEl = createRef()
@@ -270,6 +269,7 @@ class VideoMedia extends Component {
         if (position === 'right') {
             this.fastForward()
         }
+        this.changeControlStatus(true, true)
         this.switchIconsTip()
     }
 
