@@ -12,7 +12,6 @@ import transformTime from '@/functions/transformTime'
 
 class VideoMedia extends Component {
     constructor (props) {
-        // TODO fix手機全螢幕
         // TODO fix safari 切換影片ｌａｇ
         // TODO 子母畫面
         // TODO Icon 效果
@@ -163,10 +162,12 @@ class VideoMedia extends Component {
 
     handleToggleFullscreen () {
         if (document.fullscreen) {
-            document.exitFullscreen()
+            document.exitFullscreen?.() || document.webkitCancelFullScreen?.()
             return
         }
-        this.videoEl.current.parentNode.parentNode.requestFullscreen()
+        this.videoEl.current.parentNode.parentNode.requestFullscreen?.() ||
+        this.videoEl.current.parentNode.parentNode.webkitRequestFullScreen?.() ||
+        this.videoEl.current.webkitEnterFullscreen?.()
     }
 
     handleOnTracked () {
