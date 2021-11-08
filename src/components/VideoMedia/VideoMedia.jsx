@@ -12,10 +12,12 @@ import transformTime from '@/functions/transformTime'
 
 class VideoMedia extends Component {
     constructor (props) {
-        // TODO Icon 效果
-        // TODO 子母畫面
-        // TODO 彈幕
         // TODO fix手機全螢幕
+        // TODO fix 聲音消失
+        // TODO fix safari 切換影片ｌａｇ
+        // TODO 子母畫面
+        // TODO Icon 效果
+        // TODO 彈幕
         super()
         this.videoEl = createRef()
         this.props = props
@@ -79,6 +81,7 @@ class VideoMedia extends Component {
         const { source } = this.props
 
         if (prevProps.source !== source) {
+            window.sessionStorage.setItem('currentTime', 0)
             this.videoEl.current.load()
         }
     }
@@ -178,7 +181,6 @@ class VideoMedia extends Component {
     }
 
     handleOnProgress () {
-        // TODO buffered顯示問題
         const { videoCurrentTime, videoDuration } = this.state
         const { buffered } = this.videoEl.current
 
