@@ -12,7 +12,6 @@ import transformTime from '@/functions/transformTime'
 
 class VideoMedia extends Component {
     constructor (props) {
-        // TODO fix safari 切換影片ｌａｇ
         // TODO Icon 效果
         // TODO 彈幕
         super()

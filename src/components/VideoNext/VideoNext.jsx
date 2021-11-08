@@ -6,6 +6,7 @@ import './video-next.scss'
 const VideoNext = ({ nextSource, duration = 3, onChangeIsPlayNext, onNext }) => {
     const timer = useRef(null)
     const [countNumber, setCountNumber] = useState(duration)
+    const [isNextLoading, setIsNextLoading] = useState(false)
 
     useEffect(() => {
         countDown()
@@ -23,7 +24,7 @@ const VideoNext = ({ nextSource, duration = 3, onChangeIsPlayNext, onNext }) => 
                 countDown(num)
                 return
             }
-            onNext()
+            changeNext()
         }, 1000)
     }
 
@@ -32,8 +33,16 @@ const VideoNext = ({ nextSource, duration = 3, onChangeIsPlayNext, onNext }) => 
         onChangeIsPlayNext(false)
     }
 
+    const changeNext = () => {
+        setIsNextLoading(true)
+        onNext()
+    }
+
     return (
-        <div className='video-next'>
+        <div className={classNames('video-next', {
+            '-active': !isNextLoading,
+        })}
+        >
             <div className='video-next__main'>
                 <p className='video-next__info'>
                     {countNumber > 0 ? `下一個影片將在${countNumber}秒後播放` : '即將開始播放'}
@@ -47,7 +56,7 @@ const VideoNext = ({ nextSource, duration = 3, onChangeIsPlayNext, onNext }) => 
                 </div>
                 <div className='video-next__buttons'>
                     <button className='video-next__button' onClick={cancelCount}>取消</button>
-                    <button className='video-next__button' onClick={onNext}>立即播放</button>
+                    <button className='video-next__button' onClick={changeNext}>立即播放</button>
                 </div>
             </div>
         </div>

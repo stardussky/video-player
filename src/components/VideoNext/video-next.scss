@@ -5,6 +5,13 @@
     align-items: center;
     justify-content: center;
     padding: $padding;
+    opacity: 0;
+    pointer-events: none;
+
+    &.-active {
+        opacity: 1;
+        pointer-events: auto;
+    }
 
     &__image {
         @include aspect(9 / 16);
