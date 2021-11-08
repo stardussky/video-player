@@ -13,7 +13,6 @@ import transformTime from '@/functions/transformTime'
 class VideoMedia extends Component {
     constructor (props) {
         // TODO fix safari 切換影片ｌａｇ
-        // TODO 子母畫面
         // TODO Icon 效果
         // TODO 彈幕
         super()
@@ -58,6 +57,8 @@ class VideoMedia extends Component {
         this.handlePlaybackRateStatus = this.handlePlaybackRateStatus.bind(this)
         // fullscreen
         this.handleToggleFullscreen = this.handleToggleFullscreen.bind(this)
+        // picture in picture
+        this.handleTogglePictureInPicture = this.handleTogglePictureInPicture.bind(this)
 
         this.handleOnTracked = this.handleOnTracked.bind(this)
         this.handleOnProgress = this.handleOnProgress.bind(this)
@@ -168,6 +169,16 @@ class VideoMedia extends Component {
         this.videoEl.current.parentNode.parentNode.requestFullscreen?.() ||
         this.videoEl.current.parentNode.parentNode.webkitRequestFullScreen?.() ||
         this.videoEl.current.webkitEnterFullscreen?.()
+    }
+
+    handleTogglePictureInPicture () {
+        if (document.pictureInPictureElement) {
+            document.exitPictureInPicture()
+        } else {
+            if (document.pictureInPictureEnabled) {
+                this.videoEl.current.requestPictureInPicture()
+            }
+        }
     }
 
     handleOnTracked () {
@@ -503,6 +514,13 @@ class VideoMedia extends Component {
                                     onChangePlaybackRate={this.handleChangePlaybackRate}
                                     onChangeSettingStatus={this.handleChangeSettingStatus}
                                 />
+                                <button
+                                    title='迷你播放器'
+                                    className='video-media__controls-item video-media__controls-picture-in-picture'
+                                    onClick={this.handleTogglePictureInPicture}
+                                >
+                                    <SvgIcon name='picture' />
+                                </button>
                                 <button
                                     title='全螢幕'
                                     className='video-media__controls-item video-media__controls-fullscreen'
