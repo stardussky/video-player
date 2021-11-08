@@ -13,7 +13,6 @@ import transformTime from '@/functions/transformTime'
 class VideoMedia extends Component {
     constructor (props) {
         // TODO fix手機全螢幕
-        // TODO fix 聲音消失
         // TODO fix safari 切換影片ｌａｇ
         // TODO 子母畫面
         // TODO Icon 效果
@@ -336,7 +335,7 @@ class VideoMedia extends Component {
 
     loadSessionStorage () {
         this.handleChangeCurrentTime(window.sessionStorage.getItem('currentTime'))
-        this.handleChangeVolume(window.sessionStorage.getItem('volume'))
+        this.handleChangeVolume(window.sessionStorage.getItem('volume') || '1')
         this.handleChangePlaybackRate(Number(window.sessionStorage.getItem('playbackRate')) || 1)
     }
 
