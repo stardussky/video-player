@@ -28,6 +28,9 @@ $font-family: (
             @include media-breakpoint-down(desktop) {
                 font-size: 24px;
             }
+            @include media-breakpoint-down(tablet) {
+                font-size: 18px;
+            }
         }
         @else if ($type == 2) {
             font-size: 16px;

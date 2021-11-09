@@ -5,8 +5,10 @@
     align-items: center;
     justify-content: center;
     padding: $padding;
+    max-width: 400px;
     opacity: 0;
     pointer-events: none;
+
 
     &.-active {
         opacity: 1;
@@ -16,8 +18,8 @@
     &__image {
         @include aspect(9 / 16);
 
-        margin-bottom: $padding;
         width: 400px;
+        margin-bottom: $padding;
         @include media-breakpoint-down(desktop) {
             width: 300px;
         }
