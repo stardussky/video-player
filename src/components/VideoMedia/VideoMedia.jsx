@@ -345,7 +345,9 @@ class VideoMedia extends Component {
     }
 
     loadSessionStorage () {
-        this.handleChangeCurrentTime(window.sessionStorage.getItem('currentTime'))
+        if (window.sessionStorage.getItem('currentTime') > 0) {
+            this.handleChangeCurrentTime(window.sessionStorage.getItem('currentTime'))
+        }
         this.handleChangeVolume(window.sessionStorage.getItem('volume') || '1')
         this.handleChangePlaybackRate(Number(window.sessionStorage.getItem('playbackRate')) || 1)
     }
@@ -392,6 +394,7 @@ class VideoMedia extends Component {
                 <div className='video-media__main'>
                     <video
                         playsInline
+                        poster={this.props.source.thumbnail}
                         ref={this.videoEl}
                         onLoadedMetadata={this.handleOnload}
                         onPlay={this.handleVideoStatus}
