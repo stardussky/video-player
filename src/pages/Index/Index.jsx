@@ -8,19 +8,19 @@ function Index () {
     const history = useHistory()
     const [sources, setSources] = useState([
         {
-            name: 'video1',
+            name: '【月球隕落】HD中文正式電影預告',
             source: new URL('../../assets/video/video1.mp4', import.meta.url).href,
-            thumbnail: new URL('../../assets/img/img1.png', import.meta.url).href,
+            thumbnail: new URL('../../assets/img/img1.jpg', import.meta.url).href,
         },
         {
-            name: 'video2',
+            name: '【梅艷芳Anita】正式預告',
             source: new URL('../../assets/video/video2.mp4', import.meta.url).href,
-            thumbnail: new URL('../../assets/img/img2.png', import.meta.url).href,
+            thumbnail: new URL('../../assets/img/img2.jpg', import.meta.url).href,
         },
         {
-            name: 'video3',
+            name: '【蜘蛛人：無家日】最新4K前導電影預告',
             source: new URL('../../assets/video/video3.mp4', import.meta.url).href,
-            thumbnail: new URL('../../assets/img/img3.png', import.meta.url).href,
+            thumbnail: new URL('../../assets/img/img3.jpg', import.meta.url).href,
         },
     ])
     const routeQuery = useMemo(() => new URLSearchParams(search, [search]))
