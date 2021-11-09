@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import PropTypes from 'prop-types'
 import './video-thumbnail.scss'
 
 function VideoThumbnail ({ videoEl, currentTime }) {
     const [thumbnails, setThumbnails] = useState({})
+    const [preloadThumbnails, setPreloadThumbnails] = useState({})
     const thumbnailEl = useRef(null)
     const video = useRef(null)
     const canvas = useRef(null)
@@ -22,7 +23,23 @@ function VideoThumbnail ({ videoEl, currentTime }) {
             canvas.current.height = clientHeight
             ctx.current = canvas.current.getContext('2d')
 
-            video.current.addEventListener('timeupdate', getThumbnail)
+            video.current.addEventListener('timeupdate', handleTimeupdate)
+
+            const preloadEl = el.cloneNode(true)
+            preloadEl.addEventListener('loadedmetadata', async () => {
+                const { duration } = preloadEl
+
+                for (let i = 0; i <= Math.ceil(duration); i++) {
+                    preloadEl.currentTime = i
+                    await new Promise(resolve => {
+                        preloadEl.addEventListener('canplay', () => {
+                            const image = getThumbnail(preloadEl, 0)
+                            setPreloadThumbnails((thumbnails) => ({ ...thumbnails, [i]: image }))
+                            resolve(image)
+                        }, { once: true })
+                    })
+                }
+            }, { once: true })
         }
     }
 
@@ -31,29 +48,39 @@ function VideoThumbnail ({ videoEl, currentTime }) {
 
         video.current.currentTime = duration
     }
-    const getThumbnail = () => {
-        if (canvas.current && ctx.current) {
-            ctx.current.drawImage(video.current, 0, 0, canvas.current.width, canvas.current.height)
-            const image = canvas.current.toDataURL('image/webp', 0.2)
+    const handleTimeupdate = () => {
+        const image = getThumbnail(video.current, 1)
+        if (image) {
             setThumbnails((thumbnails) => ({ ...thumbnails, [video.current.currentTime]: image }))
+        }
+    }
+    const getThumbnail = (video, encoder = 1) => {
+        if (video instanceof HTMLVideoElement && canvas.current && ctx.current) {
+            ctx.current.drawImage(video, 0, 0, canvas.current.width, canvas.current.height)
+            return canvas.current.toDataURL('image/webp', encoder)
         }
     }
 
     useEffect(() => {
         initVideo()
         return () => {
-            video.current.removeEventListener('timeupdate', getThumbnail)
+            video.current.removeEventListener('timeupdate', handleTimeupdate)
         }
     }, [])
     useEffect(() => {
         changeCurrentTime(currentTime)
     }, [currentTime])
 
+    const image = useMemo(() => {
+        const t = Math.ceil(currentTime)
+        return thumbnails[t] || preloadThumbnails[t]
+    }, [currentTime, thumbnails])
+
     return (
         <div className='video-thumbnail' ref={thumbnailEl}>
             <div
                 style={{
-                    background: thumbnails[Math.ceil(currentTime)] ? `url(${thumbnails[Math.ceil(currentTime)]}) no-repeat center / cover` : '#111',
+                    background: image ? `url(${image}) no-repeat center / cover` : '#111',
                 }}
             />
         </div>
