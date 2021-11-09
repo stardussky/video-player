@@ -24,7 +24,11 @@ function Index () {
         },
     ])
     const routeQuery = useMemo(() => new URLSearchParams(search, [search]))
-    const currentSourceIndex = useMemo(() => sources.findIndex(({ name }) => name === (routeQuery.get('watch') || 'video1')))
+    const currentSourceIndex = useMemo(() => {
+        const index = sources.findIndex(({ name }) => name === routeQuery.get('watch'))
+        if (~index) return index
+        return 0
+    })
     const source = useMemo(() => sources[currentSourceIndex], [sources, currentSourceIndex])
     const nextSource = useMemo(() => sources[(currentSourceIndex + 1) % sources.length], [sources, currentSourceIndex])
 
